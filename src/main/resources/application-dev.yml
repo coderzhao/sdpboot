@@ -1,0 +1,39 @@
+server:
+  port: 9999
+sdk:
+  #host_ip: 192.168.10.106
+  host_ip: 192.168.10.126
+  port: 8000
+#  token: LpgB-nMPq
+  token: wMDR-mT6r
+  version: v0
+  api:
+    identify:
+      threshold: 0.7
+data:
+  threshold: 12
+  thread_num: 3
+  draw: 20
+  storage: /data/images
+
+identify:
+  type: biggest
+  size: 100
+
+door:
+#  switch_address: http://192.168.10.212:8899/switch/on_off_ex
+  switch_address: http://127.0.0.1:8899/switch/on_off_ex
+  type: 3
+  dangerLevel: 3
+kzcamera:
+  resolution:
+      width: 1280
+      height: 720
+jvtcamera:
+  ip: 192.168.10.90
+  port: 8000
+  username: admin
+  password: n-tech123
+sysconfig:
+  upload_path: /data/upload/
+  snapshot_path: /data/images/

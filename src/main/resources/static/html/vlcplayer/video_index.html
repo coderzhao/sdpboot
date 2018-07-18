@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>智慧小区</title>
+    <!--[if lte IE 9]><script>window.location.href='browser.html'</script><![endif]-->
+    <link rel="stylesheet" href="css/video_push.css" />
+    <script type="text/javascript" src="js/jquery.min.js" ></script>
+</head>
+<body>
+
+<div class="main">
+    <div class="top_img">
+        <div id="headtitle" class="top_text">智慧小区</div>
+    </div>
+    <div class="xian"></div>
+    <div class="left_box">
+        <div class="title_font">视频预览</div>
+        <div class="seatch">
+            <div class="left_input">
+                <div class="left_font">摄像头列表</div>
+                <div class="right_select">
+                    <select class="select_box" id="ipc_list" onchange="playFun()">
+                        <!--<option>广域网APP测试</option>-->
+                        <!--<option>大门道闸</option>-->
+                        <!--<option>某某测试</option>-->
+                    </select>
+                </div>
+                <div class="right_input"></div>
+            </div>
+            <div class="preview_img">
+                <img id="camera" src="" style="border-radius: 15px;" height="100%" width="100%" />
+            </div>
+        </div>
+    </div>
+    <div class="right_information">
+        <table id="table_id">
+        </table>
+    </div>
+</div>
+</body>
+<script type="text/javascript">
+    $(document).ready(function(){
+        loadRevealImgDiv();
+        //設置各个div的宽高
+        $(window).resize(function(){//当窗口大小发生变化时
+            loadRevealImgDiv();
+        });
+    })
+    function loadRevealImgDiv(){
+        var photographs=$(".photographs").height();
+        var information_box=$(".information_box").width();
+        var top_img=$(".top_img").height();
+        $(".photographs").css('width',photographs);
+        $(".information_text").css("width",information_box-photographs-35);
+        $(".top_text").css("line-height",top_img+"px");
+    }
+
+    var baseurl = "http://" + window.location.host + "/";
+//    var baseurl = "http://" + window.location.host + "/sdproperty/";
+    var ipclist;//ipc列表， 展示在combox中
+    var ipcId = 1;
+    var mac='';
+//    var pictureReConnect = true;
+//    var videoReConnect = true;
+    var pictureWebsocket;
+    var videoWebsocket;
+    $(function () {
+        $('<audio id="danger"><source src="./voice/danger.ogg" type="audio/ogg"> <source src="./voice/danger.mp3" type="audio/mpeg"></audio>').appendTo('body');//载入声音文件
+        $('<audio id="notice"><source src="./voice/notice.ogg" type="audio/ogg"> <source src="./voice/notice.mp3" type="audio/mpeg"></audio>').appendTo('body');//载入声音文件
+        $('<audio id="strange"><source src="./voice/strange.ogg" type="audio/ogg"> <source src="./voice/strange.mp3" type="audio/mpeg"></audio>').appendTo('body');//载入声音文件
+
+        /*=======================获取标题=========================*/
+        var requestUrl = baseurl + "PreApiSetting/querySysName.do";
+        $.get(requestUrl, null, function (data) {
+            if (data != null && data.value != null) {
+                document.getElementById('headtitle').innerHTML = data.value;
+            }
+        });
+
+        /*=======================获取Ipc列表，建立Websocket连接=========================*/
+        $.ajax({
+            url: baseurl + "PreApiIpc/queryAllIpc.do",
+            type: 'POST',
+            success: function (data) {
+                ipclist = data;
+                $.each(data, function (index, ipc) {
+                    $("#ipc_list").append("<option id=" + ipc.id + " value=" + ipc.id + "," + ipc.address + ">" + ipc.name + "</option>");
+                });
+//                console.log(data[0].id);
+                mac = $("#ipc_list").val().split(",")[1];
+                ipcId = $("#ipc_list").val().split(",")[0];
+                connectVideo(mac);
+                connectPicture(ipcId);
+            }
+        })
+
+    })
+
+    //    //判断是否已经登录，不是跳到登录页面
+    //    $.ajaxSetup({
+    //        //这个方法是目前适应easyui和普通jquery ajax请求的唯一方法，上面的都有各种问题
+    //        complete: function (XMLHttpRequest, textStatus) {
+    //            var sessionstatus = XMLHttpRequest.getResponseHeader("sessionstatus"); //通过XMLHttpRequest取得响应头,sessionstatus，
+    //            if (sessionstatus == 'logout') {
+    //                //如果超时就处理 ，指定要跳转的页面
+    //                window.top.location = "../../../index.ftl";
+    //            }
+    //        }
+    //    });
+    function getGuestType(guestCode) {
+        switch (guestCode) {
+            case 1:
+//                $("#notice")[0].play();
+                return "<div class='information_box'>";
+                break;
+            case 2:
+//                $("#notice")[0].play();
+                return "<div class='information_box_blue'>"
+                break;
+            case 3:
+                $("#danger")[0].play();
+                return "<div class='information_box_alert_red'>"
+                break;
+            case 4:
+//                $("#notice")[0].play();
+                return "<div class='information_box_blue'>"
+                break;
+            default:
+//                $("#strange")[0].play();
+                return "<div class='information_box_blue'>"
+        }
+    }
+
+
+        function checkUndefined(role, level) {
+            if (role) {
+                if (level==1) {
+                    return '<div style="color: #00ee00;font-size:289%">验证通过</div>'
+                }else if(level==3){
+                    return '<div style="color: red;font-size:289%">标记人员</div>'
+                }
+            } else {
+                return '<div style="color: red;font-size:289%">验证失败</div>'
+            }
+        }
+
+//    function checkUndefined(object) {
+//        if (object) {
+//            //            if(){
+//            return object
+////                return '<div style="color: #00ee00;font-size:300%">验证通过</div>'
+//            //            }
+//        } else {
+////                return '<div style="color: red;font-size:300%">未通过</div>'
+//            return "未注册"
+//        }
+//    }
+
+    function showResult(result) {
+        if (result != null) {
+            var json = eval('(' + result + ')')
+            var s = document.getElementById("table_id");
+            for (var i = json.length - 1; i >= 0; i--) {
+                var x = s.insertRow(0);  //将在第一行添加; firefox为－1， ie似乎为0
+
+                //每行添加列, 共有1列
+                var cell1 = x.insertCell(-1);
+                var parentDiv = getGuestType(json[i]['securityLevel']);
+                vhtml = parentDiv + '<div class="photographs">' +
+                    '<img src="' + json[i]['photo'] + '"/></div>' +
+                    '<div class="information_text">' +
+                    checkUndefined(json[i]['roleName'], json[i]['securityLevel']) +
+//                    '<p>姓名：' + checkUndefined(json[i]['name']) + '</p>' +
+//                    '<p>编码：' + checkUndefined(json[i]['guestCode']) + '</p>' +
+//                    '<p>身份：' + checkUndefined(json[i]['roleName']) + '</p>' +
+//                    '<p>拍照时间：' + checkUndefined(json[i]['createTime']) + '</p>' +
+                    '</div>' +
+                    '</div>';
+                cell1.innerHTML = vhtml;
+            }
+            var t = s.rows.length
+            var maxline = 5;
+            if (t > maxline) {  //当table中行数超过最大行数时,删除最早的行
+                for (var m = 0; m < t - maxline; m++) {
+                    s.deleteRow(s.rows.length - 1);
+                }
+            }
+            loadRevealImgDiv();
+        }
+    };
+
+    /**
+     * 视频推送连接
+     */
+    function connectVideo(mac) {
+        videoWebsocket = new WebSocket("ws://" + window.location.hostname + ":8080/sdproperty/wsVideoPush.do?mac=" + mac);
+        videoWebsocket.onmessage = videoMessage;
+        videoWebsocket.onclose = videoClose;
+        videoWebsocket.onerror = videoError;
+        videoWebsocket.onopen = videoOpen;
+    }
+
+    function videoOpen() {
+        console.log("connect wsVideoPush success")
+    }
+
+    function videoMessage(evnt) {
+        var pic = "data:image;base64," + evnt.data;
+        $("#camera").attr("src", pic)
+    }
+
+    function videoError() {
+        console.log("connect wsVideoPush error")
+    }
+
+    function videoClose() {
+        console.log("wsVideoPush closed")
+        setTimeout(connectVideo(mac),1000)
+    }
+
+    //change camera
+    function playFun() {
+        mac = $("#ipc_list").val().split(",")[1];
+        ipcId = $("#ipc_list").val().split(",")[0];
+//        videoReConnect=false;
+//        pictureReConnect=false;
+//        if (videoWebsocket.readyState == 1) {
+            videoWebsocket.onclose=function () {
+                console.log("change camera video need not reconnect")
+            };
+            videoWebsocket.close()
+//        }
+//        if (pictureWebsocket.readyState == 1) {
+            pictureWebsocket.onclose=function () {
+                console.log("change camera picture need not reconnect")
+            };
+            pictureWebsocket.close();
+//        }
+        $("#camera").attr("src", "");
+
+        //clear push picture data
+        var s = document.getElementById("table_id");
+        var t = s.rows.length
+        if (t > 0) {  //清空table
+            for (var m = 0; m < t; m++) {
+                s.deleteRow(s.rows.length - 1);
+            }
+        }
+        //connect to new ws
+//        pictureReConnect=true;
+//        videoReConnect=true;
+        connectVideo(mac);
+        connectPicture(ipcId);
+    }
+
+    /**
+     * picture推送连接
+     */
+    function connectPicture(ipcId) {
+        pictureWebsocket = new WebSocket("ws://" + window.location.hostname + ":8080/sdproperty/wsPicturePush.do?ipcId=" + ipcId);
+        pictureWebsocket.onmessage = pictureMessage;
+        pictureWebsocket.onclose = pictureClose;
+        pictureWebsocket.onerror = pictureError;
+        pictureWebsocket.onopen = pictureOpen;
+    }
+
+    function pictureOpen() {
+        console.log("connect wsPicturePush success")
+    }
+
+    function pictureMessage(evnt) {
+//        console.log("connect wsPicturePush success");
+//        var pic = evnt.data;
+//        var pic = "data:image;base64," + evnt.data;
+//        $("#camera").attr("src", pic)
+        showResult(evnt.data);
+    }
+
+    function pictureError() {
+        console.log("connect wsPicturePush error")
+    }
+
+    function pictureClose() {
+
+//        if (pictureReConnect) {
+        setTimeout(connectPicture(ipcId),1000)
+//            connectPicture(ipcId)
+//        }
+        console.log("wsPicturePush closed")
+    }
+
+
+</script>
+
+</html>

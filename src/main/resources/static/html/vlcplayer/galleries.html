@@ -1,0 +1,14 @@
+{% autoescape None %}
+<!DOCTYPE html>
+<head>
+        <meta charset="utf-8">
+	<title>Galleries</title>
+</head>
+<body>
+		<p>Here are your galleries:</p>
+		{% if len(response["results"]) > 0 %}
+			{% for gallery in response["results"] %}
+				<p><a href="/demo/faces/?gallery={{ gallery }}">{{ gallery }}</a></p>
+			{% end %}
+		{% end %}
+</body>

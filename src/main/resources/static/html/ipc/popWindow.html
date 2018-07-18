@@ -1,0 +1,48 @@
+<html>
+  <head>
+	  <!--<script language="javascript" type="text/javascript" src="/static/js/flpublic.js"></script>-->
+  	<script type="text/javascript">
+		jQuery(function($){
+			//下拉表格初始化
+			$('#addDeptId').combobox({
+				valueField:'id', //值字段
+			    textField:'name', //显示的字段
+			    url:'dept/allList',
+			    panelHeight:'auto',
+			    required:true,
+				editable:false//不可编辑，只能选择
+			});
+		});
+
+  	</script>
+  </head>
+  
+  <body>
+	  <script>
+	  var requesturl = baseurl + "PreApiDoor/getAllDoor.do";
+
+	  $('#parentagent').combobox({
+	  url:requesturl,
+	  valueField:'id',
+	  method:'GET',
+	  textField:'name',
+	  onLoadSuccess:function(){
+//	  var data = $('#parentagent').combobox('getData');
+//	  $("#parentagent ").combobox('select',data[0].id);
+	  }
+	  });
+	  </script>
+  	<!-- 验证还是jquery-validation好用，这里省事没用 -->
+	<form id="userForm" method="post" style="margin: 10;text-align: left;">
+		ID：<input name="id"  readonly="true" type="text" style="width: 100"  class="easyui-validatebox" > <br>
+
+		名称：<input name="name" style="width: 200" validType="length[1,48]" class="easyui-validatebox" required="true"><br>
+		cameraId：<input name="cameraId" style="width: 200" validType="length[1,128]" class="easyui-validatebox" > <br>
+		播放地址：<input name="address" style="width: 500" validType="length[1,512]" class="easyui-validatebox" required="true"> <br>
+		所属门岗：<input  class="easyui-combobox" id="parentagent" name="doorId" required="true" ><br>
+		<br>
+		<a href="#" id="btn-back" onclick="closeWindow();" class="easyui-linkbutton" iconCls="icon-back">返回</a>
+		<a href="#" id="btn-add" onclick="addOrUpdate();" class="easyui-linkbutton" iconCls="icon-save"  accept-charset="UTF-8">保存</a>
+	</form>
+  </body>
+</html>

@@ -1,0 +1,48 @@
+{% autoescape None %}
+<!DOCTYPE html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Face enrollment</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" href="/demo/css/style.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+	<div class="container-fixed">
+		<form enctype="multipart/form-data" action="" method="post">
+			<div class="row">
+				<div class="col-md-4">
+					<div class="photopreview">
+						<img class="img-responsive" id="facepreview">
+					</div>
+					<div class="form-group">
+				    <input type="file" class="form-control" name="photo" onchange="document.getElementById('facepreview').src = window.URL.createObjectURL(this.files[0])">
+				  </div>
+				</div>
+				<div class="col-md-8">
+					<div class="form-group">
+				    <label for="gallery">人脸注册集</label>
+						<select name="gallery" class="form-control">
+							{% if len(galleries["results"]) > 0 %}
+								{% for gallery in galleries["results"] %}
+									{% if gallery == 'default' %}
+										<option value="{{ gallery }}" selected>{{ gallery }}</option>
+									{% else %}
+										<option value="{{ gallery }}">{{ gallery }}</option>
+									{% end %}
+								{% end %}
+							{% end %}
+						</select>
+				  </div>
+				  <div class="form-group">
+				    <label for="name">姓名</label>
+				    <input type="text" class="form-control" name="name">
+				  </div>
+				  <button type="submit" class="btn btn-primary">人脸入库</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</body>

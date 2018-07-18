@@ -1,0 +1,3 @@
+mybatis:
+  mapperLocations: classpath:mapper/*.xml
+#  typeAliasesPackage: com.anytec.sdproperty.data.model

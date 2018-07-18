@@ -1,0 +1,342 @@
+<html>
+<head>
+    <script language="javascript" type="text/javascript" src="/static/js/flutil.js"></script>
+    <script language="javascript" type="text/javascript" src="/static/js/flpublic.js"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="keywords" content="jquery,ui,easy,easyui,web">
+    <meta name="description" content="easyui help you build your web page easily!">
+    <script type="text/javascript" src="/static/js/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/js/jquery/jquery.form.js"></script>
+
+    <!--上传图片没问题，测试通过。 细节待完善。-->
+    <link rel="stylesheet" type="text/css" href="/static/js/jquery/jquery-easyui-1.5.3/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="/static/js/jquery/jquery-easyui-1.5.3/themes/icon.css">
+    <script type="text/javascript" src="/static/js/jquery/jquery-easyui-1.5.3/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/static/js/jquery/jquery-easyui-1.5.3/locale/easyui-lang-zh_CN.js"></script>
+
+    <script>
+        var requestRoleList = baseurl + "PreApiGuestRole/getAllGuestRole.do";
+        var headImage = null;//上传图片的路径
+        var g_snapshotId = null;//如果从快照跳转过来，则为快照id，否则为null
+		var imageList = null;
+
+        //格式化时间
+        $("#lockStartTime").datetimebox({
+            formatter: formatDate
+        });
+        $("#lockEndTime").datetimebox({
+            formatter: formatDate
+        });
+
+        //    $("#lockEndTime").datetimebox({
+        //        formatter:formatDate,parser:parserDate
+        //    });
+
+        //日期格式化
+        function formatDate(date) {
+            var month = date.getMonth() + 1;
+            if ("" != date) {
+                if (date.getMonth() + 1 < 10) {
+                    month = '0' + (date.getMonth() + 1);
+                }
+                var day = date.getDate();
+                if (date.getDate() < 10) {
+                    day = '0' + date.getDate();
+                }
+
+                //返回格式化后的时间
+                return date.getFullYear() + '-' + month + '-' + day + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+            } else {
+                return "";
+            }
+        }
+
+        function parserDate(s) {
+            var reg = /[\u4e00-\u9fa5]/  //利用正则表达式分隔
+            var ss = (s.split(reg));
+            var y = parseInt(ss[0], 10);
+            var m = parseInt(ss[1], 10);
+            var d = parseInt(ss[2], 10);
+            var h = parseInt(ss[3], 10);
+            if (!isNaN(y) && !isNaN(m) && !isNaN(d) && !isNaN(h)) {
+                return new Date(y, m - 1, d, h);
+            } else {
+                return "";
+            }
+        }
+        
+        function closeSelf() {
+            window.parent.closeCurTab();
+
+        }
+
+        function uploadImage() {
+            var imagePath = $("#image_input").val();
+            if (imagePath == "") {
+                alert("请选择上传图片文件");
+                return false;
+            }
+            var strExtension = imagePath.substr(imagePath.lastIndexOf('.') + 1);
+            if (strExtension != 'jpg' && strExtension != 'gif' && strExtension != 'jpeg' && strExtension != 'JPEG'
+                && strExtension != 'png' && strExtension != 'JPG' && strExtension != 'PNG') {
+                alert("格式不正确，只支持jpg和png格式的图片！");
+                return false;
+            }
+            $("#form").ajaxSubmit({
+                type: 'POST',
+                url: baseurl + 'upload/uploadimage.do',
+                success: function (data) {
+//                    alert("上传成功");
+//                    headImage = data.path;
+                    headImage =  webroot + data.url;
+                    $("#imgDiv").empty();
+                    $("#imgDiv").html('<img src="' + data.url + '" height="200" width="200"/>');
+                    $("#imgDiv").show();
+                },
+                error: function () {
+                    alert("上传失败，请检查网络后重试");
+                }
+            });
+        }
+
+        function upFiles() {
+            var uploadFiles = $("#upFile").get(0).files;
+            var formData = new FormData();
+            for(var i=0;i<uploadFiles.length;i++){
+                formData.append("file", uploadFiles[i]);
+            }
+            $.ajax({
+                url: baseurl + 'upload/uploadimages.do',
+                data:formData,
+                type:"post",
+                processData: false,
+                contentType: false,
+                success:function (data) {
+                    imageList = data.imagePathList;
+                    alert("图片批量上传成功，数量为："+imageList.length);
+                },
+                error:function (data) {
+                    alert("error,图片批量上传发生错误！");
+                }
+            })
+            $("#upFile").get(0).value="";
+        }
+
+        function addOrUpdate(){
+            var r = $('#userForm').form('validate');
+            if(!r) {
+                return false;
+            }
+			var name =$("#name").val();
+            if(null==name||name==""){
+                alert("请输入访客姓名！");
+                return false;
+            }
+            var guestRole =$("#combobox_guest_role").combobox('getText');
+            if(null==guestRole||guestRole==""){
+                alert("请选择访客类型！");
+                return false;
+			}
+
+            if(headImage == null){
+                alert("请上传图片");
+                return false;
+            }
+            var requestUrl = baseurl + 'PreApiGuest/addOrUpdate.do';
+            var param = $("#userForm").serializeArray();
+            param.push({"name":"uploadImage","value":headImage});
+//            param['uploadImage'] = headImage;
+            $.post(requestUrl, param, function(data){
+//                $.messager.confirm('提示','添加已成功！',function(result){
+//                    if (result){
+//
+//                    }
+//                });
+//                setTimeout(function() {
+//                    $.messager.confirm('提示','添加已成功?',function(result){
+//                        if (result){
+//
+//                        }
+//                    });
+//                },100);
+
+                if(data.result == 1){
+                    $.messager.confirm('提示','添加已成功，请刷新访客列表！',function(result){
+//                    if (result){
+                        closeSelf();
+//                        window.parent.refreshGuestListTab();
+//                    }
+                    });
+//
+                }else {
+                    $.messager.alert('提示', data.mes, 'info');
+                }
+            });
+        }
+
+        function addImages(){
+            var r = $('#userForm').form('validate');
+            if(!r) {
+                return false;
+            }
+
+            if(imageList == null){
+                alert("请选择批量上传的文件夹");
+                return false;
+            }
+            var guestRole =$("#combobox_guest_role").combobox('getText');
+            if(null==guestRole||guestRole==""){
+                alert("请选择访客类型！");
+                return false;
+            }
+            var requestUrl = baseurl + 'PreApiGuest/addImages.do';
+            var param = $("#userForm").serializeArray();
+            param.push({"name":"uploadImageList","value":imageList});
+            param.push({"name":"webroot","value":webroot});
+            $.post(requestUrl, param, function(data){
+                if(data.result == 1){
+                    $.messager.confirm('提示','批量添加已成功，请刷新访客列表！',function(result){
+//                    if (result){
+                        closeSelf();
+//                        window.parent.refreshGuestListTab();
+//                    }
+                    });
+//
+                }else {
+                    $.messager.alert('提示', data.mes, 'info');
+                }
+            });
+        }
+
+        function initForm(input) {
+            g_snapshotId = null;
+            if(input != null) {
+                $("#userForm").form('load', input);
+                headImage = input.photo;
+                $("#imgDiv").empty();
+                $("#imgDiv").html('<img src="' + headImage + '" height="200" width="200"/>');
+                $("#imgDiv").show();
+            }else{
+                $('#userForm')[0].reset();
+//                document.getElementById("userForm").reset();
+                $("#imgDiv").empty();
+                $("#imgDiv").html('<img src="' + "" + '" height="200" width="200"/>');
+                $("#imgDiv").show();
+            }
+        }
+
+        //从快照列表跳转过来的，增加访客身份
+        function initBySnapshot(photo, snapshotId) {
+                g_snapshotId = snapshotId;
+                headImage = photo;
+                $('#userForm')[0].reset();
+                $("#imgDiv").empty();
+                $("#imgDiv").html('<img src="' + headImage + '" height="200" width="200"/>');
+                $("#imgDiv").show();
+        }
+
+    </script>
+
+</head>
+
+<body class="easyui-layout" id="mainBody" style="border: 1px solid #287db6;">
+<script>
+
+</script>
+<!--蒙层-->
+<div id="outerdiv"
+     style="position:fixed;top:0;left:0;background:rgba(0,0,0,0.7);z-index:2;width:100%;height:100%;display:none;">
+    <div id="innerdiv" style="position:absolute;"></div>
+    <form id="resultForm" method="post" style="margin:10px;text-align: left;">
+        访客添加成功
+        <a href="#" id="btn-close" onclick="closeSelf();" class="easyui-linkbutton" iconCls="icon-back">返回</a>
+    </form>
+</div>
+<!-- 中 -->
+<div id="imagett" region=center class="easyui-layout" style="width:300px;height:372px;background:#FFFFFF;margin-top: 20px;border: none;">
+    <div id="imgDiv" style="width:200px;height:200px; "></div>
+    <div id="imgconfirm"  style="width:200px;height:80px;background:#FFFFFF;">
+        <form id="form" enctype="multipart/form-data">
+            <span>选择上传头像:</span> <br>
+			<input type="file" id="image_input" name="file" onchange="uploadImage()" />
+			<span>批量上传头像:</span> <br>
+			<input type="file" multiple webkitdirectory id="upFile" onchange="upFiles()"/>
+        </form>
+    </div>
+
+</div>
+
+<div id="tt" region="west" class="easyui-layout" margin-left="10px" style="width:400px;height:250px;border: none;">
+    <form id="userForm" method="post" style="margin:10px;text-align: left;">
+        <!-- 验证还是jquery-validation好用，这里省事没用 -->
+        <table>
+        	<tr>
+        		<td>ID：</td>
+        		<td><input class="input_bor" name="id" readonly="true" type="text" style="width: 200px" class="easyui-validatebox"></td>
+        	</tr>
+        	<tr>
+        		<td>头像编码：</td>
+        		<td><input class="input_bor" name="code" readonly="true" type="text" style="width: 200px" class="easyui-validatebox"></td>
+        	</tr>
+        	<tr>
+        		<td>姓名：</td>
+        		<td><input id="name" class="input_bor" name="name" style="width: 200px" validType="length[1,30]" class="easyui-validatebox"></td>
+        	</tr>
+        	<tr>
+        		<td>证件号码：</td>
+        		<td><input class="input_bor" name="cardNo" style="width: 200px" validType="length[1,30]" class="easyui-validatebox"></td>
+        	</tr>
+        	<tr>
+        		<td>年龄：</td>
+        		<td><input class="input_bor" name="age"style="width: 200px"  class="text" value="0" data-options="min:1,precision:1,max=150"></td>
+        	</tr>
+        	<tr>
+        		<td>性别：</td>
+        		<td><select class="easyui-combobox" name="gender" style="width:200px;" panelHeight="auto">
+            <option value="1">男</option>
+            <option value="0">女</option>
+        </select></td>
+        	</tr>
+        	<tr>
+        		<td>房间号：</td>
+        		<td><input class="input_bor" name="room" style="width: 200px" validType="length[1,64]" class="easyui-validatebox"></td>
+        	</tr>
+        	<tr>
+        		<td>访客类型：</td>
+        		<td><select class="easyui-combobox"
+                     name="guestRoleId"
+                     style="width:200px;height:20px" editable="false"
+                     id="combobox_guest_role"
+                     data-options="
+									url:requestRoleList,
+									method:'POST',
+									valueField:'id',
+									textField:'name',
+									panelHeight:'auto'
+								">
+                </select></td>
+        	</tr>
+        	<tr>
+        		<td>自动开锁开始时间：</td>
+        		<td><input type="text" class="easyui-datetimebox" id="lockStartTime" name="lockStartTime" value=""
+                    style="width:200px"></td>
+        	</tr>
+        	<tr>
+        		<td>自动开锁结束时间：</td>
+        		<td><input type="text" class="easyui-datetimebox" id="lockEndTime" name="lockEndTime" value=""
+                    style="width:200px"></td>
+        	</tr>
+        </table>
+    </form>
+     <div class="btn_box">
+	    <a href="#" id="btn-back" onclick="closeSelf();" class="easyui-linkbutton" iconCls="icon-back">返回</a>
+	    <a href="#" id="btn-add" onclick="addOrUpdate();" class="easyui-linkbutton" iconCls="icon-save"
+	           accept-charset="UTF-8">保存</a>
+		 <a href="#" id="btn-addImages" onclick="addImages();" class="easyui-linkbutton" iconCls="icon-save"
+			accept-charset="UTF-8">批量保存</a>
+     </div>
+     
+</div>
+      
+</body>
+</html>

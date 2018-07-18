@@ -1,0 +1,66 @@
+<html>
+<head>
+	<!--<script language="javascript" type="text/javascript" src="/static/js/flpublic.js"></script>-->
+	<script type="text/javascript">
+        jQuery(function($){
+            //下拉表格初始化
+            $('#addDeptId').combobox({
+                valueField:'id', //值字段
+                textField:'name', //显示的字段
+                url:'dept/allList',
+                panelHeight:'auto',
+                required:true,
+                editable:false//不可编辑，只能选择
+            });
+        });
+
+
+
+	</script>
+</head>
+
+<body>
+<!--<script>-->
+<!--$('#parentagent').combobox({-->
+<!--url:'${ctx}/webapiAgent/getMyAgentListAll.do',-->
+<!--valueField:'id',-->
+<!--method:'GET',-->
+<!--textField:'name',-->
+<!--onLoadSuccess:function(){-->
+<!--var data = $('#parentagent').combobox('getData');-->
+<!--$("#parentagent ").combobox('select',data[0].id);-->
+<!--}-->
+<!--});-->
+<!--</script>-->
+<!-- 验证还是jquery-validation好用，这里省事没用 -->
+<form id="userForm" method="post" style="margin: 10;text-align: left;">
+	ID：<input name="id"  readonly="true" type="text" style="width: 100"  class="easyui-validatebox" > <br>
+
+	角色名称：<input name="name" style="width: 200px" validType="length[1,30]" class="easyui-validatebox" required="true"><br>
+	安全等级：
+	<select class="easyui-combobox" name="securityLevel" style="width:200px;" panelHeight="auto" required="true">
+		<option value="1">安全</option>
+		<option value="2">警告</option>
+		<option value="3">危险</option>
+		<option value="3">未知</option>
+	</select><br>
+	是否自动开门：
+	<select class="easyui-combobox" name="autoOpenDoor" style="width:200px;" panelHeight="auto" required="true">
+		<option value="1">是</option>
+		<option value="0">否</option>
+	</select><br>
+	是否限制时间段：
+	<select class="easyui-combobox" name="limitTime" style="width:50px;" panelHeight="auto" required="true">
+		<option value="1">是</option>
+		<option value="0">否</option>
+	</select><br>
+
+	<!--默认开启时长(天):-->
+	<!--<input type="text" class="easyui-numberbox" name="openTime"  style="width:100px;" data-options="min:0,precision:2"><br>-->
+
+	<br>
+	<a href="#" id="btn-back" onclick="closeWindow();" class="easyui-linkbutton" iconCls="icon-back">返回</a>
+	<a href="#" id="btn-add" onclick="addOrUpdate();" class="easyui-linkbutton" iconCls="icon-save"  accept-charset="UTF-8">保存</a>
+</form>
+</body>
+</html>

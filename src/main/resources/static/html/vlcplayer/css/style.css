@@ -1,0 +1,129 @@
+.img {
+  float:left;
+  margin-right: 20px;
+}
+
+.face > img {
+  display: block;
+  margin: auto;
+}
+
+.person {
+  height: 200px;
+  margin-bottom: 20px;
+}
+.frame {
+  height: 200px;
+}
+.thumbnail {
+  height: 200px;
+}
+.video {
+  display: inline-block;
+  position:relative;
+  width: 200px;
+}
+.content {
+  float:right;
+  width: 80%;
+}
+.navbuttons {
+  float:right;
+  width: 80%;
+  padding-left: 10px;
+  padding-top: 10px;
+}
+.sidebar {
+  min-height: 100%;
+  float:left;
+  width: 20%;
+  padding-left: 5px;
+}
+
+.wrapper {
+  padding-top: 40px;
+}
+
+.container-fixed {
+  margin-top: 50px;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 800px;
+}
+
+.container-fluid {
+  max-width: 1200px;
+}
+
+.photopreview {
+  height: 300px;
+  border: 1px solid black;
+  position: relative;
+}
+
+.alert {
+  text-align: center;
+}
+
+h1.startup {
+  width: 100%;
+  text-align: center;
+}
+
+.startup {
+  margin-bottom: 30px;
+  text-transform: uppercase;
+  width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.face {
+  margin-bottom: 20px;
+}
+
+.new-gallery {
+  margin-top: 50px;
+}
+
+div.well>button {
+  margin-top: 10px;
+}
+
+.face > p {
+  word-break: break-all;
+}
+
+#facepreview {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+}
+/* sizes */
+#main-wrap > div { min-height: 450px; }
+
+#header,
+#footer {
+    min-height: 40px;
+    text-align: center;
+}
+
+/* layout */
+#main-wrap {
+    /* overflow to handle inner floating block */
+    overflow: hidden;
+}
+
+.left-column {
+    float: left;
+    width: 40%;
+}
+
+.right-column {
+    float: right;
+    width: 60%;
+    padding-top: 60px;
+}

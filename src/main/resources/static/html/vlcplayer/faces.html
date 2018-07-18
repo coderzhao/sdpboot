@@ -1,0 +1,83 @@
+{% autoescape None %}
+<!DOCTYPE html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Faces</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" href="/demo/css/style.css">
+	<script src="js/jquery.min.js.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+	<div class="wrapper">
+		<div class="sidebar">
+			<ul class="nav nav-pills nav-stacked">
+				{% for gallery in galleries["results"] %}
+					{% if gallery == current_gallery %}
+						<li class="active"><a href="/demo/faces/?gallery={{ gallery }}">{{ gallery }}</a></li>
+					{% else %}
+						<li><a href="/demo/faces/?gallery={{ gallery }}">{{ gallery }}</a></li>
+					{% end %}
+				{% end %}
+				<li><a href="#" data-toggle="collapse" data-target="#newgalleryform" style="font-style: italic;">增加一个新的注册集</a><li>
+			</ul>
+			<div class="form-group well new-gallery collapse" id="newgalleryform">
+				<label for="name">注册集名</label>
+				<input type="text" class="form-control" id="newgalleryname">
+				<button id="create-gallery" class="btn btn-success">创建</button>
+			</div>
+			<div class="new-gallery">
+				<a href="/demo/face" class="btn btn-warning">增加人脸</a>
+				<a href="/demo/index.html" class="btn btn-default">主页</a>
+			</div>
+		</div>
+		<div class="content">
+			<div class="container-fluid">
+				{% if "Error" in response %}
+					<p>{{ response }}</p>
+				{% else %}
+					<div class="row">
+					{% if len(response) > 0 %}
+						{% for face in response %}
+						<div class="col-md-3 face">
+							<img class="img-responsive" style="height: 200px;" src="{{ face["thumbnail"] }}">
+							<p>{{ face["id"] }}: {{ face["meta"] }}</p>
+							<p>Galleries:
+							{% for gallery in face["galleries"] %}
+								<a href="/demo/faces/?gallery={{ gallery }}">{{ gallery }}</a>
+							{% end %}
+							</p>
+							<a href="/demo/face_delete/?id={{ face["id"] }}" class="btn btn-danger btn-xs" role="button">Delete</a>
+						</div>
+						{% end %}
+					{% end %}
+					</div>
+				{% end %}
+			</div>
+		</div>
+	</div>
+	<script>
+		$(document).ready(function(){
+			$('#create-gallery').on('click', function() {
+		    console.log("Adding gallery "+$("#newgalleryname").val());
+				$.ajax({
+					url: "/demo/gallery",
+					method: 'POST',
+					data: { name: $("#newgalleryname").val() },
+					success: function (returndata) {
+						console.log(returndata);
+						if (returndata == "Success") {
+							location.reload();
+						} else {
+							alert(returndata);
+						}
+					},
+					error: function (returndata) {
+						alert("Unknown error. Please try again.");
+					}
+				});
+			});
+		});
+	</script>
+</body>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html ng-app="CamViewModule">
+<head>
+<meta charset="UTF-8">
+    <title>Camera Live Streaming</title>
+    <link rel="stylesheet" href="../../css/bootstrap.css" />
+</head>
+
+<body ng-controller="CameraCtrl">
+	<div class="container-fluid" >
+		<div class="row ">
+			<div class="col-md-6">
+				<p class="buttons-row">
+					<div align="center">
+						<button type="button" class="btn btn-success" ng-disabled="isViewing(cameras[0])" ng-click="startView(cameras[0])">Start</button>
+						<b>{{cameras[0].name}}</b>
+						<button type="button" class="btn btn-danger" ng-click="stopView(cameras[0])">Stop</button>
+						<br/>
+						<img id="{{cameras[0].name}}" width="300" src="../../img/stuartcam.jpg" />
+					</div>
+					</p>
+			</div>
+			<div class="col-md-6">
+				<p class="buttons-row">
+					<div align="center">
+						<button type="button" class="btn btn-success" ng-disabled="isViewing(cameras[1])" ng-click="startView(cameras[1])">Start</button>
+						<b>{{cameras[1].name}}</b>
+						<button type="button" class="btn btn-danger" ng-click="stopView(cameras[1])">Stop</button>
+						<br/>
+						<img id="{{cameras[1].name}}" width="300" src="../../img/stuartcam.jpg" />
+					</div>
+				</p>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-6">
+				<p class="buttons-row">
+					<div align="center">
+						<button type="button" class="btn btn-success" ng-disabled="isViewing(cameras[2])" ng-click="startView(cameras[2])">Start</button>
+						<b>{{cameras[2].name}}</b>
+						<button type="button" class="btn btn-danger" ng-click="stopView(cameras[2])">Stop</button>
+						<br/>
+						<img id="{{cameras[2].name}}" width="300" src="../../img/stuartcam.jpg" />
+					</div>
+					</p>
+			</div>
+			<div class="col-md-6">
+				<p class="buttons-row">
+					<div align="center">
+						<button type="button" class="btn btn-success" ng-disabled="isViewing(cameras[3])" ng-click="startView(cameras[3])">Start</button>
+						<b>{{cameras[3].name}}</b>
+						<button type="button" class="btn btn-danger" ng-click="stopView(cameras[3])">Stop</button>
+						<br/>
+						<img id="{{cameras[3].name}}" width="300" src="../../img/stuartcam.jpg" />
+					</div>
+				</p>
+			</div>
+		</div>
+	</div>
+
+	<!-- <div align="center">
+	    <div align="center"><h2>實時影像</h2></div>
+		<div style="width: 600px">
+			<div uib-carousel active="0" interval="0" no-wrap="false">
+				<div uib-slide ng-repeat="camera in cameras track by camera.id"
+					index="camera.id">
+					<img ng-src="{{camera.data}}" style="margin: auto;" width="600">
+					<div class="carousel-caption">
+						<h4>{{camera.name}}</h4>
+						<p><button class="btn-success">Start</button><button class="btn-danger">Stop</button></p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div> -->
+	<script src="/static/js/angular/angular.min.js"></script>
+	<script src="/static/js/angular/angular-route.min.js"></script>
+	<script src="/static/js/angular/angular-cookies.min.js"></script>
+	<script src="/static/js/angular/angular-sanitize.min.js"></script>
+	<script src="/static/js/angular/angular-animate.min.js"></script>
+ 	<script src="/static/js/angular/ui-bootstrap-tpls-2.5.0.min.js"></script>
+ 	
+ 	<script src="/static/js/api.js"></script>
+ 	<script src="/static/js/main.js"></script>
+ 	<script src="/static/js/wsclient.js"></script>
+ 	
+</body>
+</html>

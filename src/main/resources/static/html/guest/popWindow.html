@@ -1,0 +1,157 @@
+<html>
+<head>
+    <!--<script language="javascript" type="text/javascript" src="/static/js/flpublic.js"></script>-->
+    <script type="text/javascript">
+        jQuery(function ($) {
+            //下拉表格初始化
+            $('#addDeptId').combobox({
+                valueField: 'id', //值字段
+                textField: 'name', //显示的字段
+                url: 'dept/allList',
+                panelHeight: 'auto',
+                required: true,
+                editable: false//不可编辑，只能选择
+            });
+        });
+
+
+
+
+    </script>
+
+    <script>
+        $('#combox_guest_role').combobox({
+            url: baseurl + "PreApiGuestRole/getAllGuestRole.do",
+            valueField: 'id',
+            method: 'POST',
+            textField: 'name',
+            onLoadSuccess: function () {
+
+//	  var data = $('#combox_guest_role').combobox('getData');
+//	  $("#parentagent ").combobox('select',data[0].id);
+            }
+        });
+
+        //格式化时间
+        $("#lockStartTime").datetimebox({
+            formatter: formatDate
+        });
+        $("#lockEndTime").datetimebox({
+            formatter: formatDate
+        });
+
+        //    $("#lockEndTime").datetimebox({
+        //        formatter:formatDate,parser:parserDate
+        //    });
+
+        //日期格式化
+        function formatDate(date) {
+            var month = date.getMonth() + 1;
+            if ("" != date) {
+                if (date.getMonth() + 1 < 10) {
+                    month = '0' + (date.getMonth() + 1);
+                }
+                var day = date.getDate();
+                if (date.getDate() < 10) {
+                    day = '0' + date.getDate();
+                }
+
+                //返回格式化后的时间
+                return date.getFullYear() + '-' + month + '-' + day + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+            } else {
+                return "";
+            }
+        }
+
+        function parserDate(s) {
+            var reg = /[\u4e00-\u9fa5]/  //利用正则表达式分隔
+            var ss = (s.split(reg));
+            var y = parseInt(ss[0], 10);
+            var m = parseInt(ss[1], 10);
+            var d = parseInt(ss[2], 10);
+            var h = parseInt(ss[3], 10);
+            if (!isNaN(y) && !isNaN(m) && !isNaN(d) && !isNaN(h)) {
+                return new Date(y, m - 1, d, h);
+            } else {
+                return "";
+            }
+        }
+
+        function uploadImage() {
+            var imagePath = $("#image_input").val();
+            if (imagePath == "") {
+                alert("请选择上传图片文件");
+                return false;
+            }
+            var strExtension = imagePath.substr(imagePath.lastIndexOf('.') + 1);
+            if (strExtension != 'jpg' && strExtension != 'gif'
+                && strExtension != 'png' && strExtension != 'JPG' && strExtension != 'PNG') {
+                alert("格式不正确，只支持jpg和png格式的图片！");
+                return false;
+            }
+            $("#form").ajaxSubmit({
+                type: 'POST',
+                url: baseurl + 'upload/uploadimage.do',
+                success: function (data) {
+                    alert("上传成功");
+                    $("#imgDiv").empty();
+                    $("#imgDiv").html('<img src="' + data + '" height="200" width="200"/>');
+                    $("#imgDiv").show();
+                },
+                error: function () {
+                    alert("上传失败，请检查网络后重试");
+                }
+            });
+        }
+    </script>
+
+
+</head>
+
+<body  id="mainBody">
+
+    <!-- 验证还是jquery-validation好用，这里省事没用 -->
+    ID：<input name="id" readonly="true" type="text" style="width: 100px" class="easyui-validatebox"> <br>
+    头像编码：<input name="code" readonly="true" type="text" style="width: 100px" class="easyui-validatebox"> <br>
+
+    <div id="imgDiv" style="width:200px;height:200px;background:#00F;"></div>
+    <div id="imgconfirm"  style="width:200px;height:60px;background:#EEEEEE;">
+        <form id="form" enctype="multipart/form-data">
+            选择上传头像:<br>
+            <input type="file" id="image_input" name="file"/>
+            <a href="#" onclick="uploadImage()"><br><br>上传图片</a>
+        </form>
+    </div>
+
+    <br>
+
+    <form id="userForm" method="post" style="margin:10px;text-align: left;">
+
+        姓名：<input name="name" style="width: 200px" validType="length[1,30]" class="easyui-validatebox"><br>
+        证件号码：<input name="cardNo" style="width: 100px" validType="length[1,30]" class="easyui-validatebox"><br>
+        年龄：<input name="age" class="text" value="0" data-options="min:1,precision:1,max=150"> <br>
+        <!--性别：-->
+        <select class="easyui-combobox" name="securityLevel" style="width:200px;" panelHeight="auto">
+            <option value="1">男</option>
+            <option value="0">女</option>
+        </select><br>
+        房间号：<input name="room" style="width: 200px" validType="length[1,64]" class="easyui-validatebox"><br>
+        访客类型：<input class="easyui-combobox" id="combox_guest_role" name="guestRoleId"><br>
+        <br>
+        自动开锁开始时间：<input type="text" class="easyui-datetimebox" id="lockStartTime" name="lockStartTime" value=""
+                        style="width:150px"><br>
+        自动开锁结束时间：<input type="text" class="easyui-datetimebox" id="lockEndTime" name="lockEndTime" value=""
+                        style="width:150px"><br>
+
+        <!--自动开锁开始时间：<input type="text" data-options="formatter:formatDate,parser:parserDate" class="easyui-datetimebox" id="lockStartTime" name="lockStartTime" value=""-->
+        <!--style="width:150px"><br>-->
+        <!--自动开锁结束时间：<input type="text" data-options="formatter:formatDate,parser:parserDate" class="easyui-datetimebox" id="lockEndTime" name="lockEndTime" value=""-->
+        <!--style="width:150px"><br>-->
+
+        <a href="#" id="btn-back" onclick="closeWindow();" class="easyui-linkbutton" iconCls="icon-back">返回</a>
+        <a href="#" id="btn-add" onclick="addOrUpdate();" class="easyui-linkbutton" iconCls="icon-save"
+           accept-charset="UTF-8">保存</a>
+    </form>
+
+</body>
+</html>

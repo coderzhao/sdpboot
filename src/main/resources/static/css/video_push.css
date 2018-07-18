@@ -1,0 +1,243 @@
+@font-face {
+    font-family: yt;
+    src: url(../font/yt.TTF);
+}
+
+html,
+body,
+div,
+ul,
+li,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+dl,
+dt,
+dd,
+ol,
+form,
+input,
+textarea,
+th,
+td,
+select {
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    font-family: yt;
+    font-size: 20px;
+    height: 100%;
+    background-color: #e4e4e4;
+    min-width:1050px;
+    min-height:700px;
+}
+
+.main {
+    width: 100%;
+    height: 100%;
+}
+
+.top_img {
+    width: 100%;
+    height: 17%;
+    background: url(../img/nav.png) no-repeat;
+    background-size: 100% 100%;
+    color: white;
+    font-size: 50px;
+    text-align: center;
+}
+
+.left_box {
+    width: 65%;
+    height: 80%;
+    background-color: #e4e4e4;
+    border: 1px solid #1582b6;
+    border-radius: 15px;
+    float: left;
+}
+
+.title_font {
+    font-size: 30px;
+    height: 10%;
+    margin-top: 3%;
+    text-align: center;
+}
+
+.seatch {
+    width: 100%;
+    height: 85%;
+}
+
+.left_input {
+    width: 50%;
+    height: 44px;
+    margin-left: 10%;
+    background-color: #ffffff;
+    border-radius: 13px 0px 0px 13px;
+}
+
+.left_font {
+    color: #ffffff;
+    width: 33%;
+    height: 44px;
+    text-align: center;
+    line-height: 44px;
+    border-radius: 13px 0px 0px 13px;
+    font-size: 20px;
+    background-color: #1582b6;
+    float: left;
+}
+
+.right_select {
+    float: left;
+    width: 66%;
+    height: 44px;
+    float: left;
+}
+
+.select_box {
+    width: 300px;
+    height: 44px;
+    outline: none;
+    padding-left: 15px;
+    border: 0;
+    display: block;
+    position: relative;
+    min-height: 1.146667rem;
+    line-height: 1.146667rem;
+    white-space: nowrap;
+    width: 100%;
+    overflow: hidden;
+    padding-right: .6rem;
+    background-color: #eee;
+    background: transparent;
+    appearance: none;
+    -moz-appearance: none;
+    /* Firefox */
+    -webkit-appearance: none;
+    /* Safari 和 Chrome */
+    background: url(../img/bottom_icon.png) no-repeat;
+    background-size: 100% 100%;
+    font-family: "微软雅黑";
+    font-size: 17px;
+}
+
+select::-ms-expand {
+    display: none;
+}
+
+.right_box {
+    float: right;
+    width: 100px;
+    height: 44px;
+    background-color: white;
+    text-align: center;
+    line-height: 44px;
+    cursor: pointer;
+}
+
+.right_box:hover {
+    background-color: #050B36;
+    color: white;
+}
+
+.right_information {
+    margin-top: 2px;
+    width: 32%;
+    height: 76%;
+    float: right;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+#vid {
+    margin-top: 50px;
+}
+
+.information_box {
+    width: 100%;
+    height: 126px;
+    margin-bottom: 5%;
+    border: 1px solid #00CD00;
+    padding: 5px;
+}
+
+.information_box_blue{
+    border: 1px solid #1582b6;
+    width: 100%;
+    height: 126px;
+    margin-bottom: 5%;
+    padding: 5px;
+}
+
+.information_box_alert_red{
+    border: 1px solid #FF3030;
+    width: 100%;
+    height: 126px;
+    margin-bottom: 5%;
+    padding: 5px;
+}
+
+
+.photographs {
+    width: 40%;
+    height: 90%;
+    margin-top: 5px;
+    margin-left: 5px;
+    margin-right: 5px;
+    border: 1px solid #1582b6;
+    float: left;
+    border-radius: 8px;
+}
+
+.top_text {
+    text-shadow: 5px 5px 5px #2d4e59;
+}
+
+.photographs img {
+    width: 100%;
+    height: 100%;
+    border-radius: 2%;
+}
+
+.information_text {
+    float: left;
+    width: 55% !important;
+    height: 100%;
+    padding-left:12px;
+    padding-top:5px;
+}
+
+.information_text p {
+    margin-bottom: 5px;
+    color: #4f4e4e;
+    font-size:15px;
+}
+
+.preview_img {
+    border: 1px solid #1582b6;
+    margin-left: 10%;
+    margin-top: 3%;
+    width: 80%;
+    height: 80%;
+    border-radius: 15px;
+}
+
+.xian {
+    width: 100%;
+    height: 2%;
+}
+table{
+    width: 100%;
+}

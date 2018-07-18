@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>WebUploader</title>
+<link rel="stylesheet" type="text/css" href="uploadTool/webuploader/webuploader.css" />
+<link rel="stylesheet" type="text/css" href="uploadTool/resetcss/style.css" />
+<script type="text/javascript" src="uploadTool/jQuery/jquery-3.1.1.min.js"></script>
+<script type="text/javascript" src="uploadTool/layer/layer.js"></script>
+<style type="text/css">
+	.webuploader-pick:hover { background: #00a2d4; }
+</style>
+<script type="text/javascript">
+	$(function(){
+		$("#question").click(function(){
+	    	layer.open({
+	    	    type: 2,
+	    	    area: ['850px', '550px'],
+	    	    shade: false,
+	    	    title: false,
+	    	    content: './uploader.html'
+	    	});
+	    });
+	});
+</script>
+</head>
+<body>
+	<input type="hidden" id="id" value="123456">
+ 	<input type="button" value="上传图片" id="question" class="webuploader-pick">
+</body>
+</html>

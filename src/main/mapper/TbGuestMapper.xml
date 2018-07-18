@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.anytec.sdproperty.dao.TbGuestMapper" >
+  <resultMap id="BaseResultMap" type="com.anytec.sdproperty.data.model.TbGuest" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="image" property="image" jdbcType="VARCHAR" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="guest_role_id" property="guestRoleId" jdbcType="INTEGER" />
+    <result column="first_time" property="firstTime" jdbcType="TIMESTAMP" />
+    <result column="last_time" property="lastTime" jdbcType="TIMESTAMP" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="card_no" property="cardNo" jdbcType="VARCHAR" />
+    <result column="access_guest_id" property="accessGuestId" jdbcType="INTEGER" />
+    <result column="age" property="age" jdbcType="INTEGER" />
+    <result column="gender" property="gender" jdbcType="INTEGER" />
+    <result column="room" property="room" jdbcType="VARCHAR" />
+    <result column="count" property="count" jdbcType="INTEGER" />
+    <result column="lock_start_time" property="lockStartTime" jdbcType="TIMESTAMP" />
+    <result column="lock_end_time" property="lockEndTime" jdbcType="TIMESTAMP" />
+    <result column="upload_image" property="uploadImage" jdbcType="VARCHAR" />
+    <result column="user_id_create" property="userIdCreate" jdbcType="INTEGER" />
+    <result column="last_modify_user_id" property="lastModifyUserId" jdbcType="INTEGER" />
+    <result column="last_modify_time" property="lastModifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, image, code, guest_role_id, first_time, last_time, create_time, name, card_no, 
+    access_guest_id, age, gender, room, count, lock_start_time, lock_end_time, upload_image, 
+    user_id_create, last_modify_user_id, last_modify_time
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.anytec.sdproperty.data.model.TbGuestExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from tb_guest
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_guest
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from tb_guest
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.anytec.sdproperty.data.model.TbGuestExample" >
+    delete from tb_guest
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.anytec.sdproperty.data.model.TbGuest" >
+    insert into tb_guest (id, image, code, 
+      guest_role_id, first_time, last_time, 
+      create_time, name, card_no, 
+      access_guest_id, age, gender, 
+      room, count, lock_start_time, 
+      lock_end_time, upload_image, user_id_create, 
+      last_modify_user_id, last_modify_time)
+    values (#{id,jdbcType=INTEGER}, #{image,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR}, 
+      #{guestRoleId,jdbcType=INTEGER}, #{firstTime,jdbcType=TIMESTAMP}, #{lastTime,jdbcType=TIMESTAMP}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{name,jdbcType=VARCHAR}, #{cardNo,jdbcType=VARCHAR}, 
+      #{accessGuestId,jdbcType=INTEGER}, #{age,jdbcType=INTEGER}, #{gender,jdbcType=INTEGER}, 
+      #{room,jdbcType=VARCHAR}, #{count,jdbcType=INTEGER}, #{lockStartTime,jdbcType=TIMESTAMP}, 
+      #{lockEndTime,jdbcType=TIMESTAMP}, #{uploadImage,jdbcType=VARCHAR}, #{userIdCreate,jdbcType=INTEGER}, 
+      #{lastModifyUserId,jdbcType=INTEGER}, #{lastModifyTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.anytec.sdproperty.data.model.TbGuest" >
+    insert into tb_guest
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="image != null" >
+        image,
+      </if>
+      <if test="code != null" >
+        code,
+      </if>
+      <if test="guestRoleId != null" >
+        guest_role_id,
+      </if>
+      <if test="firstTime != null" >
+        first_time,
+      </if>
+      <if test="lastTime != null" >
+        last_time,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="cardNo != null" >
+        card_no,
+      </if>
+      <if test="accessGuestId != null" >
+        access_guest_id,
+      </if>
+      <if test="age != null" >
+        age,
+      </if>
+      <if test="gender != null" >
+        gender,
+      </if>
+      <if test="room != null" >
+        room,
+      </if>
+      <if test="count != null" >
+        count,
+      </if>
+      <if test="lockStartTime != null" >
+        lock_start_time,
+      </if>
+      <if test="lockEndTime != null" >
+        lock_end_time,
+      </if>
+      <if test="uploadImage != null" >
+        upload_image,
+      </if>
+      <if test="userIdCreate != null" >
+        user_id_create,
+      </if>
+      <if test="lastModifyUserId != null" >
+        last_modify_user_id,
+      </if>
+      <if test="lastModifyTime != null" >
+        last_modify_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="image != null" >
+        #{image,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null" >
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="guestRoleId != null" >
+        #{guestRoleId,jdbcType=INTEGER},
+      </if>
+      <if test="firstTime != null" >
+        #{firstTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastTime != null" >
+        #{lastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="cardNo != null" >
+        #{cardNo,jdbcType=VARCHAR},
+      </if>
+      <if test="accessGuestId != null" >
+        #{accessGuestId,jdbcType=INTEGER},
+      </if>
+      <if test="age != null" >
+        #{age,jdbcType=INTEGER},
+      </if>
+      <if test="gender != null" >
+        #{gender,jdbcType=INTEGER},
+      </if>
+      <if test="room != null" >
+        #{room,jdbcType=VARCHAR},
+      </if>
+      <if test="count != null" >
+        #{count,jdbcType=INTEGER},
+      </if>
+      <if test="lockStartTime != null" >
+        #{lockStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lockEndTime != null" >
+        #{lockEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="uploadImage != null" >
+        #{uploadImage,jdbcType=VARCHAR},
+      </if>
+      <if test="userIdCreate != null" >
+        #{userIdCreate,jdbcType=INTEGER},
+      </if>
+      <if test="lastModifyUserId != null" >
+        #{lastModifyUserId,jdbcType=INTEGER},
+      </if>
+      <if test="lastModifyTime != null" >
+        #{lastModifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.anytec.sdproperty.data.model.TbGuestExample" resultType="java.lang.Integer" >
+    select count(*) from tb_guest
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update tb_guest
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.image != null" >
+        image = #{record.image,jdbcType=VARCHAR},
+      </if>
+      <if test="record.code != null" >
+        code = #{record.code,jdbcType=VARCHAR},
+      </if>
+      <if test="record.guestRoleId != null" >
+        guest_role_id = #{record.guestRoleId,jdbcType=INTEGER},
+      </if>
+      <if test="record.firstTime != null" >
+        first_time = #{record.firstTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.lastTime != null" >
+        last_time = #{record.lastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createTime != null" >
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.name != null" >
+        name = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.cardNo != null" >
+        card_no = #{record.cardNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.accessGuestId != null" >
+        access_guest_id = #{record.accessGuestId,jdbcType=INTEGER},
+      </if>
+      <if test="record.age != null" >
+        age = #{record.age,jdbcType=INTEGER},
+      </if>
+      <if test="record.gender != null" >
+        gender = #{record.gender,jdbcType=INTEGER},
+      </if>
+      <if test="record.room != null" >
+        room = #{record.room,jdbcType=VARCHAR},
+      </if>
+      <if test="record.count != null" >
+        count = #{record.count,jdbcType=INTEGER},
+      </if>
+      <if test="record.lockStartTime != null" >
+        lock_start_time = #{record.lockStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.lockEndTime != null" >
+        lock_end_time = #{record.lockEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.uploadImage != null" >
+        upload_image = #{record.uploadImage,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userIdCreate != null" >
+        user_id_create = #{record.userIdCreate,jdbcType=INTEGER},
+      </if>
+      <if test="record.lastModifyUserId != null" >
+        last_modify_user_id = #{record.lastModifyUserId,jdbcType=INTEGER},
+      </if>
+      <if test="record.lastModifyTime != null" >
+        last_modify_time = #{record.lastModifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update tb_guest
+    set id = #{record.id,jdbcType=INTEGER},
+      image = #{record.image,jdbcType=VARCHAR},
+      code = #{record.code,jdbcType=VARCHAR},
+      guest_role_id = #{record.guestRoleId,jdbcType=INTEGER},
+      first_time = #{record.firstTime,jdbcType=TIMESTAMP},
+      last_time = #{record.lastTime,jdbcType=TIMESTAMP},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      name = #{record.name,jdbcType=VARCHAR},
+      card_no = #{record.cardNo,jdbcType=VARCHAR},
+      access_guest_id = #{record.accessGuestId,jdbcType=INTEGER},
+      age = #{record.age,jdbcType=INTEGER},
+      gender = #{record.gender,jdbcType=INTEGER},
+      room = #{record.room,jdbcType=VARCHAR},
+      count = #{record.count,jdbcType=INTEGER},
+      lock_start_time = #{record.lockStartTime,jdbcType=TIMESTAMP},
+      lock_end_time = #{record.lockEndTime,jdbcType=TIMESTAMP},
+      upload_image = #{record.uploadImage,jdbcType=VARCHAR},
+      user_id_create = #{record.userIdCreate,jdbcType=INTEGER},
+      last_modify_user_id = #{record.lastModifyUserId,jdbcType=INTEGER},
+      last_modify_time = #{record.lastModifyTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.anytec.sdproperty.data.model.TbGuest" >
+    update tb_guest
+    <set >
+      <if test="image != null" >
+        image = #{image,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null" >
+        code = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="guestRoleId != null" >
+        guest_role_id = #{guestRoleId,jdbcType=INTEGER},
+      </if>
+      <if test="firstTime != null" >
+        first_time = #{firstTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastTime != null" >
+        last_time = #{lastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="cardNo != null" >
+        card_no = #{cardNo,jdbcType=VARCHAR},
+      </if>
+      <if test="accessGuestId != null" >
+        access_guest_id = #{accessGuestId,jdbcType=INTEGER},
+      </if>
+      <if test="age != null" >
+        age = #{age,jdbcType=INTEGER},
+      </if>
+      <if test="gender != null" >
+        gender = #{gender,jdbcType=INTEGER},
+      </if>
+      <if test="room != null" >
+        room = #{room,jdbcType=VARCHAR},
+      </if>
+      <if test="count != null" >
+        count = #{count,jdbcType=INTEGER},
+      </if>
+      <if test="lockStartTime != null" >
+        lock_start_time = #{lockStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lockEndTime != null" >
+        lock_end_time = #{lockEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="uploadImage != null" >
+        upload_image = #{uploadImage,jdbcType=VARCHAR},
+      </if>
+      <if test="userIdCreate != null" >
+        user_id_create = #{userIdCreate,jdbcType=INTEGER},
+      </if>
+      <if test="lastModifyUserId != null" >
+        last_modify_user_id = #{lastModifyUserId,jdbcType=INTEGER},
+      </if>
+      <if test="lastModifyTime != null" >
+        last_modify_time = #{lastModifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.anytec.sdproperty.data.model.TbGuest" >
+    update tb_guest
+    set image = #{image,jdbcType=VARCHAR},
+      code = #{code,jdbcType=VARCHAR},
+      guest_role_id = #{guestRoleId,jdbcType=INTEGER},
+      first_time = #{firstTime,jdbcType=TIMESTAMP},
+      last_time = #{lastTime,jdbcType=TIMESTAMP},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      name = #{name,jdbcType=VARCHAR},
+      card_no = #{cardNo,jdbcType=VARCHAR},
+      access_guest_id = #{accessGuestId,jdbcType=INTEGER},
+      age = #{age,jdbcType=INTEGER},
+      gender = #{gender,jdbcType=INTEGER},
+      room = #{room,jdbcType=VARCHAR},
+      count = #{count,jdbcType=INTEGER},
+      lock_start_time = #{lockStartTime,jdbcType=TIMESTAMP},
+      lock_end_time = #{lockEndTime,jdbcType=TIMESTAMP},
+      upload_image = #{uploadImage,jdbcType=VARCHAR},
+      user_id_create = #{userIdCreate,jdbcType=INTEGER},
+      last_modify_user_id = #{lastModifyUserId,jdbcType=INTEGER},
+      last_modify_time = #{lastModifyTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
