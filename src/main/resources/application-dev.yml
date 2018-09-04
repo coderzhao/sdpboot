@@ -1,15 +1,17 @@
 server:
   port: 9999
 sdk:
-  #host_ip: 192.168.10.106
-  host_ip: 192.168.10.126
+  host_ip: 192.168.10.212
+#  host_ip: 192.168.10.126
   port: 8000
-#  token: LpgB-nMPq
-  token: wMDR-mT6r
-  version: v0
+  token: F3Pv-TNLh
+#  token: wMDR-mT6r
+  version: v1
   api:
     identify:
       threshold: 0.7
+  face:
+    gallery: sdproperty
 data:
   threshold: 12
   thread_num: 3
@@ -18,8 +20,8 @@ data:
 
 identify:
   type: biggest
-  size: 100
-
+  size: 70
+  url: http://${sdk.host_ip}:${sdk.port}/${sdk.version}/faces/gallery/${sdk.face.gallery}/identify/
 door:
 #  switch_address: http://192.168.10.212:8899/switch/on_off_ex
   switch_address: http://127.0.0.1:8899/switch/on_off_ex
@@ -37,3 +39,6 @@ jvtcamera:
 sysconfig:
   upload_path: /data/upload/
   snapshot_path: /data/images/
+mybatis:
+  mapperLocations: classpath:mapper/*.xml
+#  typeAliasesPackage: com.anytec.sdproperty.data.model

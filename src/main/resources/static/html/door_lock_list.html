@@ -161,7 +161,7 @@
         function openDoor(doorId){
             var delurl = baseurl + 'PreApiDoorLock/openDoor.do' + '?doorId=' + doorId;
             $.post(delurl,function(data){
-                if(data.errorCode == 0){
+                if(data){
                     alert("开门成功");
 				}else{
                     alert("开门失败");

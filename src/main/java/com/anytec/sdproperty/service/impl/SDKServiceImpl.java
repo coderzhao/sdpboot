@@ -17,6 +17,7 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -30,6 +31,9 @@ public class SDKServiceImpl implements SDKService {
     private SettingService mSettingService;
     @Autowired
     private GeneralConfig config;
+
+    @Value("${sdk.face.gallery}")
+    private String faceGallery;
 
     /*
  添加人脸特征（face）
@@ -51,6 +55,7 @@ public class SDKServiceImpl implements SDKService {
 //                            .addTextBody("mf_selector", "all")
                             .addTextBody("photo", image)
                             .addTextBody("meta",meta)
+                            .addTextBody("galleries",faceGallery)
                             .build())
                     .execute().returnResponse();
             String result= EntityUtils.toString(response.getEntity());
@@ -84,7 +89,7 @@ public class SDKServiceImpl implements SDKService {
 
     @Override
     public boolean deleteFace(String id){
-        Map<String, Object> map = new HashMap<String, Object>();
+//        Map<String, Object> map = new HashMap<String, Object>();
         try {
             String url = "http://"+config.getSdkIp()+ ":8000/v0/face/id/"+id;
             CloseableHttpClient closeableHttpClient = HttpClientBuilder.create().build();
@@ -141,19 +146,19 @@ public class SDKServiceImpl implements SDKService {
 //					String url = "http://192.168.10.208:8888/";
 
             logger.info("flashOpenDoorThreadFun: " + ip + " port:" + port + " line:" + line);
-//            HttpResponse response = Request.Post(Constant.SWITCH_IP_PORT)
-//                    .connectTimeout(10000)
-//                    .socketTimeout(30000)
-////							.addHeader("Authorization", "Token " + ntechToken)
-//                    .body(MultipartEntityBuilder
-//                            .create()
-//                            .addTextBody("ip", ip)
-//                            .addTextBody("port", String.valueOf(port))
-//                            .addTextBody("line", String.valueOf(line))
-//                            .addTextBody("on_off", "1")
-//                            .addTextBody("time", String.valueOf(time))
-//                            .build())
-//                    .execute().returnResponse();
+            HttpResponse response = Request.Post(config.getSwitchAddress())
+                    .connectTimeout(10000)
+                    .socketTimeout(30000)
+//							.addHeader("Authorization", "Token " + ntechToken)
+                    .body(MultipartEntityBuilder
+                            .create()
+                            .addTextBody("ip", ip)
+                            .addTextBody("port", String.valueOf(port))
+                            .addTextBody("line", String.valueOf(line))
+                            .addTextBody("on_off", "1")
+                            .addTextBody("time", String.valueOf(time))
+                            .build())
+                    .execute().returnResponse();
 
 
 //            ZtHttpUtilResult result = ZtHttpUtil.sendHttpRequest(url, obj.toJSONString(), HttpMethod.POST);

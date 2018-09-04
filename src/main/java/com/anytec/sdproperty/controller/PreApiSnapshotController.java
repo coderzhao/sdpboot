@@ -100,21 +100,26 @@ public class PreApiSnapshotController extends BaseWebPreController{
 			String rule = "desc";
 
 			logger.info("pageNum:" + pageNum + "count:" + count + "order:" + order + "rule:" + rule);
+			if(null!=param.getGuestCode()) {
+                List<OutputSnapshotVo> listData;
+                listData = mSnapshotService.getListPage(param, pageNum, count, order, rule);
+                if (listData == null)
+                    listData = new ArrayList<OutputSnapshotVo>();
+                int countNum = mSnapshotService.getCount(param);
+                Map<String, Object> responseDataMap = new HashMap<String, Object>();
+                responseDataMap.put("total", countNum);
+                responseDataMap.put("rows", listData);
 
-			List<OutputSnapshotVo> listData;
-			listData = mSnapshotService.getListPage(param, pageNum, count, order, rule);
-			if (listData == null)
-				listData = new ArrayList<OutputSnapshotVo>();
-			Map<String, Object> responseDataMap = new HashMap<String, Object>();
-			responseDataMap.put("total", mSnapshotService.getCount(param));
-			responseDataMap.put("rows", listData);
-
-			TbGuest tbGuest = mGuestService.getByCode(param.getGuestCode());
-			tbGuest.setCount(mSnapshotService.getCount(param));
-			int result =mTbGuestMapper.updateByPrimaryKeySelective(tbGuest);
-
-//			super.outputRespBody(response, session, responseDataMap);
-			return responseDataMap;
+                TbGuest tbGuest = mGuestService.getByCode(param.getGuestCode());
+                if (tbGuest != null && countNum != 0) {
+                    tbGuest.setCount(countNum);
+                    mTbGuestMapper.updateByPrimaryKeySelective(tbGuest);
+                }
+    //			super.outputRespBody(response, session, responseDataMap);
+                return responseDataMap;
+            }
+            logger.info("no guestCode find for search");
+            return null;
 		}catch(Exception e){
 			logger.info(e.getMessage());
 			return null;

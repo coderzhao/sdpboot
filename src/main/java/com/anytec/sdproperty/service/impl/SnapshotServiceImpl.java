@@ -108,108 +108,108 @@ public class SnapshotServiceImpl implements SnapshotService {
 
     public Map<String, Object> add(InputSnapshotVo input) {
         Map<String, Object> resultMap = null;
-
-//        Date startDate = new Date();
-//        long cost;
-//        String strCost = "";
-
-        //第一步， 根据camera_id 获取ipc_id
-        TbIpcExample ipcExample = new TbIpcExample();
-        TbIpcExample.Criteria ipcc = ipcExample.createCriteria();
-        ipcc.andCameraIdEqualTo(input.getCamera_id());
-        List<TbIpc> listIpc = mIpcMapper.selectByExample(ipcExample);
-        if (listIpc == null || listIpc.size() <= 0) {
-            logger.error("摄像头不存在，camera_id = " + input.getCamera_id());
-            try {
-                throw new Exception("摄像头不存在，camera_id = " + input.getCamera_id());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        int ipcId = listIpc.get(0).getId();
-//        logger.info("ipcId" + ipcId);
-//        int doorId = listIpc.get(0).getDoorId();
-//        logger.info("doorId" + doorId);
-//        cost = new Date().getTime() - startDate.getTime();
-//        strCost += "cost1:" + cost;
-
-        //先增加快照
-        TbSnapshot snapshot = new TbSnapshot();
-        snapshot.setCreateTime(new Date());
-        snapshot.setImagefile(input.getSnapshot_photo());
-        snapshot.setIpcId(ipcId);
-        //判断相似度，如果相似度低于系统设置的相似度， 则将此次识别结果取消。
-//        if (null != input.getGusetCode()) {
-//            snapshot.setGuestCode(input.getGusetCode() + "");
+//
+////        Date startDate = new Date();
+////        long cost;
+////        String strCost = "";
+//
+//        //第一步， 根据camera_id 获取ipc_id
+//        TbIpcExample ipcExample = new TbIpcExample();
+//        TbIpcExample.Criteria ipcc = ipcExample.createCriteria();
+//        ipcc.andCameraIdEqualTo(input.getCamera_id());
+//        List<TbIpc> listIpc = mIpcMapper.selectByExample(ipcExample);
+//        if (listIpc == null || listIpc.size() <= 0) {
+//            logger.error("摄像头不存在，camera_id = " + input.getCamera_id());
+//            try {
+//                throw new Exception("摄像头不存在，camera_id = " + input.getCamera_id());
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
 //        }
-        if (input.getFace() != null) {
-            TbGuest guest = mGuestService.getByCode(input.getGusetCode() + "");
-            logger.info(Thread.currentThread().getName() + " sdkcode:"+input.getGusetCode());
-            if (guest != null) {
-                logger.info(Thread.currentThread().getName()+"sdpcode:"+ guest.getCode());
-                float nowConfidence = input.getFace().getConfidence();
-                if (mSettingService.checkConfidenceEnough(nowConfidence)) {
-                    //如果识别出来的信任度足够
-                    snapshot.setGuestCode(input.getFace().getPerson_id() + "");
-//					TbGuest tbGuest =mGuestService.getByCode(input.getFace().getPerson_id() + "");
-//					if(tbGuest != null){
-//						Integer count =tbGuest.getCount();
-//						logger.info("before count:"+count);
-//						count =count+1;
-//						tbGuest.setCount(count);
-//						int result =mTbGuestMapper.updateByPrimaryKeySelective(tbGuest);
-//					}
-                }
-            }
-
-        }
-        try {
-            snapshot.setId(1);
-            mTbSnapshotMapper.insert(snapshot);
+//        int ipcId = listIpc.get(0).getId();
+////        logger.info("ipcId" + ipcId);
+////        int doorId = listIpc.get(0).getDoorId();
+////        logger.info("doorId" + doorId);
+////        cost = new Date().getTime() - startDate.getTime();
+////        strCost += "cost1:" + cost;
 //
-//            cost = new Date().getTime() - startDate.getTime();
-//            strCost += "cost2:" + cost;
-
-            //如果识别失败， 不走一下步骤，如增加face，增加访客， 开门
-            logger.info("快照已经存储，判断是否业主");
-//        logger.info("mSettingService.checkConfidenceEnough(input.getFace().getConfidence())"+mSettingService.checkConfidenceEnough(input.getFace().getConfidence()));
-            logger.info("访客id是否使空" + HTextUtils.isEmpty(snapshot.getGuestCode()));
-            if (null != input.getFace()) {
-                if (!HTextUtils.isEmpty(snapshot.getGuestCode())) {
-                    //如果识别出来用户头像的code， 再增加 tb_snapshot_face 表
-                    logger.info("识别出是业主---" + Thread.currentThread().getName());
-                    TbSnapshotFace item = input.getFace().createSnapshot();
-                    item.setSnapshotId(snapshot.getId());
-                    item.setIpcId(ipcId);
-                    item.setGuestCode(snapshot.getGuestCode());
-//                    logger.error(input.getCamera_id());
-//                    logger.error(input.getSnapshot_photo());
-                    mTbSnapshotFaceMapper.insert(item);
-
-//                    cost = new Date().getTime() - startDate.getTime();
-//                    strCost += "cost3:" + cost;
-                    //增加到访客列表
-                    //仅当识别的code不为空， 也就是识别出结果来， 才增加到访客列表，否则不增加到访客列表
-                    add2Guest(input);
-
-//                    cost = new Date().getTime() - startDate.getTime();
-//                    strCost += "cost4:" + cost;
+//        //先增加快照
+//        TbSnapshot snapshot = new TbSnapshot();
+//        snapshot.setCreateTime(new Date());
+//        snapshot.setImagefile(input.getSnapshot_photo());
+//        snapshot.setIpcId(ipcId);
+//        //判断相似度，如果相似度低于系统设置的相似度， 则将此次识别结果取消。
+////        if (null != input.getGusetCode()) {
+////            snapshot.setGuestCode(input.getGusetCode() + "");
+////        }
+//        if (input.getFace() != null) {
+//            TbGuest guest = mGuestService.getByCode(input.getGusetCode() + "");
+//            logger.info(Thread.currentThread().getName() + " sdkcode:"+input.getGusetCode());
+//            if (guest != null) {
+//                logger.info(Thread.currentThread().getName()+"sdpcode:"+ guest.getCode());
+//                float nowConfidence = input.getFace().getConfidence();
+//                if (mSettingService.checkConfidenceEnough(nowConfidence)) {
+//                    //如果识别出来的信任度足够
+//                    snapshot.setGuestCode(input.getFace().getPerson_id() + "");
+////					TbGuest tbGuest =mGuestService.getByCode(input.getFace().getPerson_id() + "");
+////					if(tbGuest != null){
+////						Integer count =tbGuest.getCount();
+////						logger.info("before count:"+count);
+////						count =count+1;
+////						tbGuest.setCount(count);
+////						int result =mTbGuestMapper.updateByPrimaryKeySelective(tbGuest);
+////					}
+//                }
+//            }
 //
+//        }
+//        try {
+//            snapshot.setId(1);
+//            mTbSnapshotMapper.insert(snapshot);
+////
+////            cost = new Date().getTime() - startDate.getTime();
+////            strCost += "cost2:" + cost;
 //
-//                    cost = new Date().getTime() - startDate.getTime();
-//                    strCost += "cost8:" + cost;
-//                    if (cost > 500) {
-//                        logger.warn("addSendSnapshot:" + strCost);
-//                    }
-                } else {
-                    //判断code＝ null， end
-                    logger.info("code = null,陌生访客");
-                }
-            }
-        } catch (Exception e) {
-            logger.error("check error:" + e.getMessage());
-        }
-//        logger.info("addSendSnapshot:" + strCost);
+//            //如果识别失败， 不走一下步骤，如增加face，增加访客， 开门
+//            logger.info("快照已经存储，判断是否业主");
+////        logger.info("mSettingService.checkConfidenceEnough(input.getFace().getConfidence())"+mSettingService.checkConfidenceEnough(input.getFace().getConfidence()));
+//            logger.info("访客id是否使空" + HTextUtils.isEmpty(snapshot.getGuestCode()));
+//            if (null != input.getFace()) {
+//                if (!HTextUtils.isEmpty(snapshot.getGuestCode())) {
+//                    //如果识别出来用户头像的code， 再增加 tb_snapshot_face 表
+//                    logger.info("识别出是业主---" + Thread.currentThread().getName());
+//                    TbSnapshotFace item = input.getFace().createSnapshot();
+//                    item.setSnapshotId(snapshot.getId());
+//                    item.setIpcId(ipcId);
+//                    item.setGuestCode(snapshot.getGuestCode());
+////                    logger.error(input.getCamera_id());
+////                    logger.error(input.getSnapshot_photo());
+//                    mTbSnapshotFaceMapper.insert(item);
+//
+////                    cost = new Date().getTime() - startDate.getTime();
+////                    strCost += "cost3:" + cost;
+//                    //增加到访客列表
+//                    //仅当识别的code不为空， 也就是识别出结果来， 才增加到访客列表，否则不增加到访客列表
+//                    add2Guest(input);
+//
+////                    cost = new Date().getTime() - startDate.getTime();
+////                    strCost += "cost4:" + cost;
+////
+////
+////                    cost = new Date().getTime() - startDate.getTime();
+////                    strCost += "cost8:" + cost;
+////                    if (cost > 500) {
+////                        logger.warn("addSendSnapshot:" + strCost);
+////                    }
+//                } else {
+//                    //判断code＝ null， end
+//                    logger.info("code = null,陌生访客");
+//                }
+//            }
+//        } catch (Exception e) {
+//            logger.error("check error:" + e.getMessage());
+//        }
+////        logger.info("addSendSnapshot:" + strCost);
         return resultMap;
     }
 

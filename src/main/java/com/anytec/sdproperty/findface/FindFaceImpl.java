@@ -15,6 +15,7 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -26,6 +27,12 @@ public class FindFaceImpl implements FindFaceService{
 
     @Autowired
     GeneralConfig config;
+
+    @Value("${identify.url}")
+    private String identifyUrl;
+
+    @Value("${sdk.face.gallery}")
+    private String faceGallery;
 
     @Override
     public DetectPojo imageDetect(byte[] photo){
@@ -44,11 +51,11 @@ public class FindFaceImpl implements FindFaceService{
                     .execute().returnResponse();
             String reply = EntityUtils.toString(response.getEntity());
             int responseCode = response.getStatusLine().getStatusCode();
-            if(responseCode == 200){
+            if(responseCode == 200 &&reply.indexOf("x1")!=-1){
                 return gson.fromJson(reply,DetectPojo.class);
             }else {
-                logger.warn("请求未正确响应：" + responseCode);
-                logger.warn(reply);
+                logger.debug("请求未正确响应：" + responseCode);
+                logger.debug(reply);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -100,7 +107,7 @@ public class FindFaceImpl implements FindFaceService{
         multipartEntityBuilder.addTextBody("n","1");
         entity = multipartEntityBuilder.build();
         try {
-            response = Request.Post("http://"+config.getSdkIp() + ":" +config.getSdkPort()+ "/"+config.getSdkVersion()+"/identify")
+            response = Request.Post(identifyUrl)
                     .connectTimeout(10000)
                     .socketTimeout(30000)
                     .addHeader("Authorization", "Token " + config.getToken())

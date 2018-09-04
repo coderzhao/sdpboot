@@ -41,13 +41,13 @@ public class CameraChannelHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        logger.debug(ctx.channel().remoteAddress() + " connected");
+        logger.info(ctx.channel().remoteAddress() + " connected");
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         String camIp = getCameraIp(ctx);
-        logger.debug("Camera:{} offline", camIp);
+        logger.info("Camera:{} offline", camIp);
     }
 
     @Override
@@ -106,7 +106,7 @@ public class CameraChannelHandler extends ChannelInboundHandlerAdapter {
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         String clientIp = getCameraIp(ctx);
         logger.error(cause.getMessage(), cause);
-        logger.debug("ExceptionCaught from {}", clientIp);// let camera reconnect
+        logger.info("ExceptionCaught from {}", clientIp);// let camera reconnect
         ctx.channel().close();
     }
 

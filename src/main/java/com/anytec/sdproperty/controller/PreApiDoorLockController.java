@@ -102,17 +102,13 @@ public class PreApiDoorLockController extends BaseWebPreController{
 
 	@RequestMapping(value="/openDoor.do",method=RequestMethod.POST)
 	@ResponseBody
-	public void openDoor(Integer doorId, HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception{
-
-		Map<String, String> map = new HashMap<String, String>();
+	public boolean openDoor(Integer doorId, HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception{
 		try {
-			mDoorLockService.openDoor(doorId);
+			return mDoorLockService.openDoor(doorId);
 		} catch (Exception e) {
-			e.printStackTrace();
 			logger.info(e.getMessage());
-			throw e;
+			return false;
 		}
-		return;
 	}
 
 }

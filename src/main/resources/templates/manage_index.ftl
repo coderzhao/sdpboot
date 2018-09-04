@@ -69,7 +69,7 @@
         //增加"增加访客"页，需要传入快照页图片
         function addGuestAddTabBySnapshotImage(photo, snapshotId){
             var title = "增加访客";
-            var url = "sd/guest_add.html";
+            var url = "static/html/guest_add.html";
             if ($('#tt').tabs('exists', title)){
                 $('#tt').tabs('select', title);
 
@@ -133,7 +133,7 @@
         //打开访客历史记录tab，参数是访客的id，即guest表中的id
         function addGuestHistoryTab(param){
             var title = "访客进出记录";
-            var url = "sd/guest_history.html"
+            var url = "static/html/guest_history.html"
             if ($('#tt').tabs('exists', title)){
                 $('#tt').tabs('select', title);
 
@@ -260,10 +260,10 @@
 					</ul>
 				</div>
 				<div title="实时监控" style="overflow:hidden;">
-					<ul>
-						<li id="sd_snapshot_live" style="cursor: pointer;"
-							onclick="addTab('实时监控','/static/html/livestream.html')" >实时监控</li>
-					</ul>
+					<#--<ul>-->
+						<#--<li id="sd_snapshot_live" style="cursor: pointer;"-->
+							<#--onclick="addTab('实时监控','/static/html/livestream---delete.html')" >实时监控</li>-->
+					<#--</ul>-->
 					<ul>
 						<li id="sd_snapshot_list" style="cursor: pointer;"
 							onclick="addTab('快照列表','/static/html/snapshot_list.html')" >快照列表</li>

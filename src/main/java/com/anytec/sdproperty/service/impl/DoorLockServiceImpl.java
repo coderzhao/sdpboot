@@ -130,9 +130,9 @@ public class DoorLockServiceImpl implements DoorLockService {
     }
 
     public boolean openDoor(Integer id) {
-        TbDoorLock lock = mTbDoorLockMapper.selectByPrimaryKey(id);
-        mSDKService.flashOpenDoor(lock.getIp(), lock.getPort(), lock.getLine(), lock.getTime());
-        return true;
+            TbDoorLock lock = mTbDoorLockMapper.selectByPrimaryKey(id);
+            mSDKService.flashOpenDoor(lock.getIp(), lock.getPort(), lock.getLine(), lock.getTime());
+            return true;
     }
 
 

@@ -174,12 +174,14 @@ public class BusinessServiceImpl implements BusinessService {
                 createFolder(snapAndCamera, sdf.format(date));
                 String fileName = System.currentTimeMillis() + ".jpg";
                 Path path = Paths.get(generalConfig.getDataStorage(), cam_folder, sdf.format(date), fileName);
-                //入数据库
-                if (matchFace != null) {
-                    int snapshotId = saveToSnapshot(camera, path.toString(), matchFace.getFace().getId());
+
+                //匹配到人脸则快照和访客都记录
+                if (matchFace != null && matchFace.getFace()!=null) {
+                    int snapshotId = saveToSnapshot(camera, path.toString(),matchFace.getFace().getId());
                     saveToSnapshotFace(matchFace, snapshotId,camera.getId());
                 }else {
-
+                    //没有匹配人脸则只存储快照
+                    saveToSnapshot(camera, path.toString(),null);
                 }
                 //本地存储
                 saveSnapshotToFileSystem(bufferedImage, path);
@@ -202,7 +204,7 @@ public class BusinessServiceImpl implements BusinessService {
     }
 
 
-    private int saveToSnapshot(TbIpc camera, String imageFile, String guestCode) {
+    private int saveToSnapshot(TbIpc camera, String imageFile,String guestCode) {
         TbSnapshot tbSnapshot = new TbSnapshot();
         tbSnapshot.setIpcId(camera.getId());
         tbSnapshot.setCreateTime(new Date());

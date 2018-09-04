@@ -1,4 +1,4 @@
-$(document).ready(function() {
+$(document).ready(function () {
     //载入声音文件
     $('<audio id="danger"><source src="/static/voice/danger.ogg" type="audio/ogg"> <source src="/static/voice/danger.mp3" type="audio/mpeg"></audio>').appendTo('body');
     $('<audio id="notice"><source src="/static/voice/notice.ogg" type="audio/ogg"> <source src="/static/voice/notice.mp3" type="audio/mpeg"></audio>').appendTo('body');
@@ -27,7 +27,7 @@ $(document).ready(function() {
     })
     loadRevealImgDiv();
     //設置各个div的宽高
-    $(window).resize(function(){
+    $(window).resize(function () {
         //当窗口大小发生变化时
         loadRevealImgDiv();
     });
@@ -41,12 +41,12 @@ var baseurl = "http://" + window.location.host + "/";
 var topic;
 var ipCameraList;
 //GrindPlayer
-var serverIP = "rtmp://"+window.location.hostname+":1935/livecam";
+var serverIP = "rtmp://" + window.location.hostname + ":1935/livecam";
 var flashvars = {
     src: serverIP
-    ,streamType: "live"
-    ,scaleMode: "letterbox"
-    ,bufferTime: 0
+    , streamType: "live"
+    , scaleMode: "letterbox"
+    , bufferTime: 0
 };
 var params = {
     allowFullScreen: true
@@ -56,49 +56,54 @@ var params = {
 var attrs = {
     name: "player"
 };
+
 /*================ 方法 ==================*/
 function connect(mac) {
-    if(mac.indexOf(":") === -1){
+    if (mac.indexOf(":") === -1) {
         player();
         $("#camera").hide();
         $("#player").show();
-    }else {
+    } else {
         $("#camera").show();
         $("#player").hide();
     }
     var socket = new SockJS('gee');
     stompClient = Stomp.over(socket);
-    stompClient.connect({}, function(frame) {
+    stompClient.connect({}, function (frame) {
         // console.log('Connected: ' + frame);
-        stompClient.subscribe('/topic/'+mac, function(data){
+        stompClient.subscribe('/topic/' + mac, function (data) {
             var jsonData = JSON.parse(data.body);
-            if(jsonData['scene'] !== undefined){
-                $("#camera").attr("src","data:image;base64,"+jsonData['scene']);
-            }else {
+            if (jsonData['scene'] !== undefined) {
+                $("#camera").attr("src", "data:image;base64," + jsonData['scene']);
+            } else {
                 showResult(jsonData);
             }
         });
-    },function(message) {
+    }, function (message) {
         console.log(message);
         setTimeout("connect(topic)", 10000);
     });
 }
+
 function send() {
-    stompClient.send("/app/index/registry", {}, JSON.stringify({ 'name': "jklsdafjklasdfjl" }));
-    stompClient.send("/app/hello",{},"hello world!");
+    stompClient.send("/app/index/registry", {}, JSON.stringify({'name': "jklsdafjklasdfjl"}));
+    stompClient.send("/app/hello", {}, "hello world!");
 }
+
 function disconnect() {
     if (stompClient !== null) {
         stompClient.disconnect();
     }
     console.log("Disconnected");
 }
+
 function reConnect() {
     topic = $("#ipc_list option:selected").val();
     disconnect();
     connect(topic);
 
 }
+
 function showResult(json) {
     var s = document.getElementById("table_id");
     var x = s.insertRow(0);  //将在第一行添加; firefox为－1， ie似乎为0
@@ -106,7 +111,7 @@ function showResult(json) {
     //每行添加列, 共有1列
     var cell1 = x.insertCell(-1);
     var parentDiv = getGuestType(json['securityLevel']);
-    var photo = "data:image;base64,"+json['photo'];
+    var photo = "data:image;base64," + json['photo'];
     vhtml = parentDiv + '<div class="photographs">' +
         '<img src="' + photo + '"/></div>' +
         '<div class="information_text">' +
@@ -127,14 +132,16 @@ function showResult(json) {
     }
     loadRevealImgDiv();
 }
-function loadRevealImgDiv(){
-    var photographs=$(".photographs").height();
-    var information_box=$(".information_box").width();
-    var top_img=$(".top_img").height();
-    $(".photographs").css('width',photographs);
-    $(".information_text").css("width",information_box-photographs-35);
-    $(".top_text").css("line-height",top_img+"px");
+
+function loadRevealImgDiv() {
+    var photographs = $(".photographs").height();
+    var information_box = $(".information_box").width();
+    var top_img = $(".top_img").height();
+    $(".photographs").css('width', photographs);
+    $(".information_text").css("width", information_box - photographs - 35);
+    $(".top_text").css("line-height", top_img + "px");
 }
+
 function getGuestType(guestCode) {
     switch (guestCode) {
         case 1:
@@ -158,17 +165,29 @@ function getGuestType(guestCode) {
             return "<div class='information_box_blue'>"
     }
 }
+
 function checkUndefined(role, level) {
+    //role不为null时
     if (role) {
-        if (level==1) {
-            return '<div style="color: #00ee00;font-size:3vw">验证通过</div>'
-        }else if(level==3){
-            return '<div style="color: red;font-size:3vw">黑名单</div>'
+        //level不为null时
+        if (level) {
+            if (level == 1) {
+                return '<div style="color: #00ee00;font-size:3vw">验证通过</div>'
+            } else if (level == 3) {
+                return '<div style="color: red;font-size:3vw">黑名单</div>'
+            } else {
+                return '<div style="color: #2c38ec;font-size:3vw">暂未识别</div>'
+            }
+        } else {
+            console.log("level is null");
+            return '<div style="color: #2c38ec;font-size:3vw">暂未识别</div>'
         }
     } else {
-        return '<div style="color: #2c38ec;font-size:3vw">暂未识别</div>'
+        console.log("role is null")
+        return '<div style="color: #2c38ec;font-size:3vw">未知身份</div>'
     }
 }
-function player(){
-    swfobject.embedSWF("/static/grindPlayer/GrindPlayer.swf", "player", "100%","100%", "10.2", null, flashvars, params, attrs);
+
+function player() {
+    swfobject.embedSWF("/static/grindPlayer/GrindPlayer.swf", "player", "100%", "100%", "10.2", null, flashvars, params, attrs);
 }

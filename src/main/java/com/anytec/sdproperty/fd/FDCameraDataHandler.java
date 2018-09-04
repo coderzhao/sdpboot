@@ -37,6 +37,7 @@ public class FDCameraDataHandler {
 
 
     public void onCameraData(byte[] mJpgData,String mStrMac) {
+        //非阔展摄像头
         if(!mStrMac.contains(":")){
             faceReconPool.execute(()->
                     businessService.analyse(mJpgData,mStrMac)
@@ -55,7 +56,6 @@ public class FDCameraDataHandler {
         if ((count % config.getDataThreshold()) == 0) {
             logger.debug("Put to pool - mac:" + mStrMac +" length:"+ mJpgData.length);
             counts.set(0);
-            //faceReconPool.execute(new FDThread(data.mJpgData, data.mStrMac,businessService));
             faceReconPool.execute(()->
                     businessService.analyse(mJpgData,mStrMac)
             );
