@@ -378,7 +378,7 @@ public class SnapshotServiceImpl implements SnapshotService {
                 vo.setGuestCode(faceVo.getGuest().getCode());
                 vo.setConfidence(faceVo.getFace().getConfidence());
                 //讲访客信息中的源图，拼接城url返回
-                String imageUrl = mSettingService.getPhotoByImageFile(faceVo.getGuest().getImage());
+//                String imageUrl = mSettingService.getPhotoByImageFile(faceVo.getGuest().getImage());
                 vo.setOrginPhoto(faceVo.getGuest().getImage());
 
                 vo.setRoleName("未知");

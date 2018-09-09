@@ -133,14 +133,12 @@ public class PreApiGuestController extends BaseWebPreController{
 	 * @param snapshotId 如果是从快照列表添加的访客身份， 需要讲快照id传递过来
 	 * @param input
 	 * @param request
-	 * @param response
-	 * @param session
 	 * @return
 	 * @throws Exception
 	 */
 	@RequestMapping(value="/addOrUpdate.do",method=RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> addOrUpdate(Integer snapshotId, TbGuest input, HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception{
+	public Map<String, Object> addOrUpdate(Integer snapshotId, TbGuest input, HttpServletRequest request) throws Exception{
 		logger.info("snapshotid:" + snapshotId + "|input:" + input.toString());
 
 		Map<String, Object> map = new HashMap<String, Object>(16);

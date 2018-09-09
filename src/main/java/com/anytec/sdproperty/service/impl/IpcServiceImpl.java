@@ -8,6 +8,7 @@ import com.anytec.sdproperty.data.model.TbIpc;
 import com.anytec.sdproperty.data.model.TbIpcExample;
 import com.anytec.sdproperty.data.model.TbUser;
 import com.anytec.sdproperty.data.vo.TbIpcVo;
+import com.anytec.sdproperty.jedis.RedisService;
 import com.anytec.sdproperty.service.IpcService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -28,8 +29,8 @@ public class IpcServiceImpl implements IpcService {
     private TbIpcMapper mTbIpcMapper;
     @Autowired
     private TbDoorMapper mTbDoorMapper;
-//	@Autowired
-//	private SDKService mSDKService;
+	@Autowired
+	private RedisService redisService;
 
 
     @Override
@@ -97,6 +98,7 @@ public class IpcServiceImpl implements IpcService {
         TbIpc ipc = mTbIpcMapper.selectByPrimaryKey(id);
         if(ipc != null) {
             mTbIpcMapper.deleteByPrimaryKey(id);
+            redisService.remove(ipc.getAddress());
             //此处需要调用sdk的接口
 //				mSDKService.deleteCamera(ipc);
         }
@@ -117,6 +119,7 @@ public class IpcServiceImpl implements IpcService {
 
             }
             mTbIpcMapper.updateByPrimaryKey(Ipc);
+            redisService.remove(oldIpc.getAddress());
         }
         //此处需要调用sdk的接口
 //		String camera_id = mSDKService.addCamera(Ipc);

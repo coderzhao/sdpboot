@@ -1,13 +1,11 @@
 package com.anytec.sdproperty.service.impl;
 
 
-import com.anytec.sdproperty.dao.TbGuestMapper;
-import com.anytec.sdproperty.dao.TbGuestModifyRecordMapper;
-import com.anytec.sdproperty.dao.TbGuestRoleMapper;
-import com.anytec.sdproperty.dao.TbUserMapper;
+import com.anytec.sdproperty.dao.*;
 import com.anytec.sdproperty.data.model.*;
 import com.anytec.sdproperty.data.vo.TbGuestModifyRecordVo;
 import com.anytec.sdproperty.data.vo.TbGuestVo;
+import com.anytec.sdproperty.jedis.RedisService;
 import com.anytec.sdproperty.service.GuestRoleService;
 import com.anytec.sdproperty.service.GuestService;
 import com.anytec.sdproperty.service.SDKService;
@@ -26,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 
 @Service("GuestService")
@@ -36,15 +35,20 @@ public class GuestServiceImpl implements GuestService {
     @Autowired
     private GuestRoleService mGuestRoleService;
     @Autowired
-    private SettingService mSettingService;
-    @Autowired
-    private TbGuestRoleMapper mTbGuestRoleMapper;
-    @Autowired
     private SDKService mSDKService;
     @Autowired
     private TbGuestModifyRecordMapper mTbGuestModifyRecordMapper;
     @Autowired
     private TbUserMapper mTbUserMapper;
+
+    @Autowired
+    private TbSnapshotFaceMapper tbSnapshotFaceMapper;
+
+    @Autowired
+    private TbSnapshotMapper tbSnapshotMapper;
+
+    @Autowired
+    private RedisService redisService;
 
     @Override
     public TbGuest getByName(String name) throws HException {
@@ -166,6 +170,7 @@ public class GuestServiceImpl implements GuestService {
         TbGuest guest = mTbGuestMapper.selectByPrimaryKey(id);
         if(guest != null){
             logger.info("删除访客,sdk_id: "+guest.getCode());
+            redisService.remove("guest:"+guest.getCode());
             if(mSDKService.deleteFace(guest.getCode())){
                 mTbGuestMapper.deleteByPrimaryKey(id);
                 //新增访客修改记录
@@ -182,9 +187,12 @@ public class GuestServiceImpl implements GuestService {
 
     public TbGuest addOrUpdate(TbUser user, TbGuest input) {
         try {
+            //id为空则认为是添加操作
             if (input.getId() == null && (!HTextUtils.isEmpty(input.getCode()) ||(!HTextUtils.isEmpty(input.getUploadImage())))) {
                 //注册headImage中的图片
                 Map<String, Object> result = mSDKService.addFace(input.getUploadImage(),input.getName());
+
+                redisService.remove("guest:"+input.getId());
                 if(result.get("result").toString().equals("success")){
                     //新增
                     input.setUserIdCreate(user.getId());
@@ -213,17 +221,36 @@ public class GuestServiceImpl implements GuestService {
                 if (old == null) {
                     return null;
                 }
+
                 old.setLastModifyUserId(user.getId());
                 old.setLastModifyTime(new Date());
-                //todo
                 //注册headImage中的图片,如果uploadImage不为空，则注册到图库中， 并更新用户信息
+                String oldCode=old.getCode();
                 if(!HTextUtils.isEmpty(input.getUploadImage())) {
                     //图片发生了变化
-                    if(!old.getImage().equalsIgnoreCase(input.getUploadImage())) {
+                    if(!old.getUploadImage().equalsIgnoreCase(input.getUploadImage())) {
                         Map<String, Object> result = mSDKService.addFace(input.getUploadImage(),input.getName());
+                        //删除库中之前的人脸
+                        mSDKService.deleteFace(oldCode);
+                        //清除redis中的缓存内容
+                        redisService.remove(String.valueOf(input.getId()));
                         if(result.get("result").toString().equals("success")){
                             old.setImage((String) result.get("image"));
                             old.setCode((String) result.get("code"));
+
+                            //更新访客表记录
+                            TbSnapshotFaceExample example = new TbSnapshotFaceExample();
+                            example.createCriteria().andGuestCodeEqualTo(oldCode);
+                            TbSnapshotFace tbSnapshotFace = new TbSnapshotFace();
+                            tbSnapshotFace.setGuestCode((String) result.get("code"));
+                            tbSnapshotFaceMapper.updateByExampleSelective(tbSnapshotFace,example);
+
+                            //跟新快照表记录
+                            TbSnapshotExample tbSnapshotExample = new TbSnapshotExample();
+                            tbSnapshotExample.createCriteria().andGuestCodeEqualTo(oldCode);
+                            TbSnapshot tbSnapshot = new TbSnapshot();
+                            tbSnapshot.setGuestCode((String) result.get("code"));
+                            tbSnapshotMapper.updateByExampleSelective(tbSnapshot,tbSnapshotExample);
                         }else {
                             return null;
                         }
@@ -245,6 +272,8 @@ public class GuestServiceImpl implements GuestService {
                 old.setLockStartTime(input.getLockStartTime());
 
                 mTbGuestMapper.updateByPrimaryKey(old);
+
+
 
                 //更新访客修改记录
                 TbGuestModifyRecord record = new TbGuestModifyRecord();

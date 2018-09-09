@@ -5,6 +5,7 @@ import com.anytec.sdproperty.dao.TbGuestRoleMapper;
 import com.anytec.sdproperty.data.model.TbGuestRole;
 import com.anytec.sdproperty.data.model.TbGuestRoleExample;
 import com.anytec.sdproperty.data.model.TbUser;
+import com.anytec.sdproperty.jedis.RedisService;
 import com.anytec.sdproperty.service.GuestRoleService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -23,6 +24,9 @@ public class GuestRoleServiceImpl implements GuestRoleService {
 	private static final Logger logger = LoggerFactory.getLogger(GuestRoleServiceImpl.class);
 	@Autowired
 	private TbGuestRoleMapper mTbGuestRoleMapper;
+
+	@Autowired
+	private RedisService redisService;
 
 
 
@@ -74,25 +78,28 @@ public class GuestRoleServiceImpl implements GuestRoleService {
 
 	public void delete(Integer id){
 			mTbGuestRoleMapper.deleteByPrimaryKey(id);
+		redisService.remove("role:"+id);
 	}
 
-	public TbGuestRole addOrUpdate(TbGuestRole GuestRole){
-		GuestRole.setCreateTime(new Date());
-		if(GuestRole.getId() == null){
-			mTbGuestRoleMapper.insert(GuestRole);
+	public TbGuestRole addOrUpdate(TbGuestRole guestRole){
+		guestRole.setCreateTime(new Date());
+		if(guestRole.getId() == null){
+			mTbGuestRoleMapper.insert(guestRole);
 		}else{
-			TbGuestRole oldGuestRole = mTbGuestRoleMapper.selectByPrimaryKey(GuestRole.getId());
+			TbGuestRole oldGuestRole = mTbGuestRoleMapper.selectByPrimaryKey(guestRole.getId());
 			try{
 				TbGuestRole sameGuestRolename = getByName(oldGuestRole.getName());
 				if(sameGuestRolename != null){
-					throw new Exception("名称: " + GuestRole.getName() + " 已存在");
+					throw new Exception("名称: " + guestRole.getName() + " 已存在");
 				}
 			}catch(Exception e){
 
+			}finally {
+				redisService.remove("role:"+guestRole.getId());
 			}
-			mTbGuestRoleMapper.updateByPrimaryKey(GuestRole);
+			mTbGuestRoleMapper.updateByPrimaryKey(guestRole);
 		}
-		return GuestRole;
+		return guestRole;
 	}
 
 	public int getCount(TbGuestRole param){

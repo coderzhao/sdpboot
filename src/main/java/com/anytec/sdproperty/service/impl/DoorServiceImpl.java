@@ -5,6 +5,7 @@ import com.anytec.sdproperty.dao.TbDoorMapper;
 import com.anytec.sdproperty.data.model.TbDoor;
 import com.anytec.sdproperty.data.model.TbDoorExample;
 import com.anytec.sdproperty.data.model.TbUser;
+import com.anytec.sdproperty.jedis.RedisService;
 import com.anytec.sdproperty.service.DoorService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -23,6 +24,8 @@ public class DoorServiceImpl implements DoorService {
 	private static final Logger logger = LoggerFactory.getLogger(DoorServiceImpl.class);
 	@Autowired
 	private TbDoorMapper mTbDoorMapper;
+	@Autowired
+	private RedisService redisService;
 
 
 	@Override
@@ -82,6 +85,7 @@ public class DoorServiceImpl implements DoorService {
 
 	public void delete(Integer id){
 			mTbDoorMapper.deleteByPrimaryKey(id);
+			redisService.remove("lock:"+id);
 	}
 
 	public TbDoor addOrUpdate(TbDoor Door){
@@ -99,6 +103,7 @@ public class DoorServiceImpl implements DoorService {
 
 			}
 			mTbDoorMapper.updateByPrimaryKey(Door);
+			redisService.remove("lock:"+Door.getId());
 		}
 		return Door;
 	}

@@ -6,6 +6,7 @@ import com.anytec.sdproperty.dao.TbDoorLockMapper;
 import com.anytec.sdproperty.dao.TbDoorMapper;
 import com.anytec.sdproperty.data.model.*;
 import com.anytec.sdproperty.data.vo.TbDoorLockVo;
+import com.anytec.sdproperty.jedis.RedisService;
 import com.anytec.sdproperty.service.DoorLockService;
 import com.anytec.sdproperty.service.DoorService;
 import com.anytec.sdproperty.service.GuestRoleService;
@@ -36,13 +37,13 @@ public class DoorLockServiceImpl implements DoorLockService {
     private TbDoorMapper mTbDoorMapper;
 
     @Autowired
-    private GuestRoleService guestRoleService;
-
-    @Autowired
     private SDKService mSDKService;
 
     @Autowired
     private GeneralConfig generalConfig;
+
+    @Autowired
+    private RedisService redisService;
 
     public TbDoorLock addOrUpdate(TbDoorLock input){
         input.setCreateTime(new Date());
@@ -50,6 +51,7 @@ public class DoorLockServiceImpl implements DoorLockService {
             mTbDoorLockMapper.insert(input);
         }else{
             mTbDoorLockMapper.updateByPrimaryKey(input);
+//            redisService.remove(input.getId())
         }
         return input;
     }

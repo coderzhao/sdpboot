@@ -82,6 +82,7 @@ public class SettingServiceImpl implements SettingService {
 		}else{
 //			TbSys old = mTbSysMapper.selectByPrimaryKey(input.getId());
 			mTbSysMapper.updateByPrimaryKey(input);
+			redisService.remove("sysConfidence");
 		}
 		return input;
 	}
